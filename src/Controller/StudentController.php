@@ -20,7 +20,6 @@ use App\Helper\ResponseHelper;
 class StudentController extends AbstractController
 {
     #[Route('/api/student/detail', name: 'student-detail')]
-    /** @var Student $student */
     public function getStudentDetail(ManagerRegistry $doctrine, Request $request): Response
     {
         $entityManager = $doctrine->getManager();
@@ -31,7 +30,7 @@ class StudentController extends AbstractController
         if(!$hasStudentId) return ResponseHelper::missingParameterResponse("student_id");
 
         $repository = $entityManager->getRepository(Student::class);
-
+        /** @var Student $student */
         $student = $repository->find($studentId);
 
         return new JsonResponse($student->toArray(), Response::HTTP_OK, [], false);;
@@ -39,8 +38,6 @@ class StudentController extends AbstractController
 
 
     #[Route('/api/student/job-offer/subscribe', name: 'subscribe-job-offer')]
-    /** @var Student $student */
-    /** @var JobOffer $job */
     public function subscribeToJobOffer(ManagerRegistry $doctrine, Request $request): Response
     {
         $entityManager = $doctrine->getManager();
@@ -56,11 +53,13 @@ class StudentController extends AbstractController
         $jobRepository = $entityManager->getRepository(JobOffer::class);
         $repository = $entityManager->getRepository(Student::class);
 
+        /** @var JobOffer $job */
         $job = $jobRepository->find($jobId);
 
         if($job == null) return new JsonResponse(array('error' => "job offer must exist"));
         if(!$job->isActive()) return new JsonResponse(array('error' => "job offer must be active"));
 
+        /** @var Student $student */
         $student = $repository->find($studentId);
         $student->applyToJobOffer($job);
 
@@ -70,7 +69,6 @@ class StudentController extends AbstractController
     }
 
     #[Route('/api/student/job-offer/unsubscribe', name: 'unsubscribe-job-offer')]
-    /** @var Student $student */
     public function unsubscribeToJobOffer(ManagerRegistry $doctrine, Request $request): Response
     {
         $entityManager = $doctrine->getManager();
@@ -90,7 +88,7 @@ class StudentController extends AbstractController
 
         if($job == null) return new JsonResponse(array('error' => "job offer must exist"));
 
-
+        /** @var Student $student */
         $student = $repository->find($studentId);
         $student->unSubscribeToJobOffer($job);
 
