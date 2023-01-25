@@ -27,6 +27,7 @@ class Course
     public function __construct()
     {
         $this->sections = new ArrayCollection();
+        $this->jobOffer = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -135,7 +136,6 @@ class Course
 
         return [
             "id" => $this->id,
-            "description" => $this->description,
             "name" => $this->name,
             "job_offers" => count($this->jobOffer),
             "sections" => $sectionArray

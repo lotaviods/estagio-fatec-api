@@ -51,15 +51,9 @@ class CourseController extends AbstractController
         $course->setName($name);
 
         /** @var CourseRepository $repository */
-        $repository->save();
+        $repository->save($course, true);
 
-        $coursesResult = $repository->findAll();
-        $courseArray = [];
 
-        foreach ($coursesResult as $course) {
-            $courseArray[] = $course->toArray();
-        }
-
-        return new JsonResponse($courseArray, Response::HTTP_OK, [], false);;
+        return new JsonResponse(array(), Response::HTTP_OK, [], false);;
     }
 }
