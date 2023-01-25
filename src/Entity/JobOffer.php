@@ -41,7 +41,7 @@ class JobOffer
     private Collection $subscribedStudents;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string  $role = null;
+    private ?string $role = null;
 
     #[ORM\Column(length: 255, nullable: false, options: ['default' => 0])]
     private ?int $likeCount = 0;
@@ -68,6 +68,20 @@ class JobOffer
         return $this;
     }
 
+    public function setRole(?string $role): self
+    {
+        $this->role = $role;
+
+        return $this;
+    }
+
+    public function setPromotionalUrl(?string $url): self
+    {
+        $this->promotionalImageUrl = $url;
+
+        return $this;
+    }
+
     public function getJobExperience(): ?string
     {
         return $this->job_experience;
@@ -75,7 +89,7 @@ class JobOffer
 
     public function setJobExperience(?string $job_experience): self
     {
-        if($job_experience !== null)
+        if ($job_experience !== null)
             $this->job_experience = $job_experience;
 
         return $this;
@@ -118,6 +132,7 @@ class JobOffer
 
         return $newArray;
     }
+
     public function subscribeStudent(Student $student): self
     {
         if ($this->subscribedStudents->contains($student)) return $this;

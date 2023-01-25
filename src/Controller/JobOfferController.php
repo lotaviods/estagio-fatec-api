@@ -43,6 +43,8 @@ class JobOfferController extends AbstractController
         $jobDescription = $request->get("description");
         $targetCourse = $request->get("target_course_id");
         $jobExperience = $request->get("experience");
+        $role = $request->get("role");
+        $prom_image_url = $request->get("prom_image_url");
 
         $hasCompany = $companyId !== null;
         $hasDescription = $jobDescription !== null;
@@ -77,6 +79,8 @@ class JobOfferController extends AbstractController
         $job->setDescription($jobDescription);
         $job->setCompany($company);
         $job->setTargetCourse($targetCourse);
+        $job->setRole($role);
+        $job->setPromotionalUrl($prom_image_url);
 
         $repository->save($job, true);
 
