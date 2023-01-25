@@ -17,9 +17,6 @@ class Course
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $description = null;
-
-    #[ORM\Column(length: 255)]
     private ?string $name = null;
     #[ORM\OneToMany(mappedBy: 'targetCourse', targetEntity: JobOffer::class)]
     private Collection $jobOffer;
@@ -35,18 +32,6 @@ class Course
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getDescription(): ?string
-    {
-        return $this->description;
-    }
-
-    public function setDescription(string $description): self
-    {
-        $this->description = $description;
-
-        return $this;
     }
 
     public function getName(): ?string
