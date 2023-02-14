@@ -4,7 +4,6 @@
 namespace App\Entity;
 
 use App\Repository\StudentRepository;
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -15,10 +14,6 @@ class Student
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
-
-    #[ORM\ManyToOne(inversedBy: 'students')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Course $course = null;
 
     #[ORM\Column(length: 255)]
     private ?string $name = null;
