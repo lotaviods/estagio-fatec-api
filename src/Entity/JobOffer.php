@@ -46,6 +46,9 @@ class JobOffer
     #[ORM\Column(length: 255, nullable: false, options: ['default' => 0])]
     private ?int $likeCount = 0;
 
+    #[ORM\OneToOne(mappedBy: 'job_id', cascade: ['persist', 'remove'])]
+    private ?JobLocation $jobLocation = null;
+
     public function __construct()
     {
         $this->subscribedStudents = new ArrayCollection();
@@ -159,6 +162,28 @@ class JobOffer
     public function setCompany(?Company $company): self
     {
         $this->company = $company;
+
+        return $this;
+    }
+
+    public function getJobLocation(): ?JobLocation
+    {
+        return $this->jobLocation;
+    }
+
+    public function setJobLocation(?JobLocation $jobLocation): self
+    {
+        // unset the owning side of the relation if necessary
+        if ($jobLocation === null && $this->jobLocation !== null) {
+            $this->jobLocation->setJobId(null);
+        }
+
+        // set the owning side of the relation if necessary
+        if ($jobLocation !== null && $jobLocation->getJobId() !== $this) {
+            $jobLocation->setJobId($this);
+        }
+
+        $this->jobLocation = $jobLocation;
 
         return $this;
     }
