@@ -89,4 +89,20 @@ class Company
 
         return $this;
     }
+
+    /**
+     * @return string|null
+     */
+    public function getProfilePicture(): ?string
+    {
+        return $this->profilePicture;
+    }
+
+    /**
+     * @param string|null $profilePicture
+     */
+    public function setProfilePicture(?string $profilePicture): void
+    {
+        $this->profilePicture = $profilePicture;
+    }
 }

@@ -30,6 +30,12 @@ class Student
     #[ORM\ManyToMany(targetEntity: JobOffer::class)]
     private Collection $appliedJobs;
 
+    #[ORM\JoinTable(name: 'student_liked_jobs')]
+    #[ORM\JoinColumn('student_id', referencedColumnName: "id")]
+    #[ORM\InverseJoinColumn(name: 'job_id', referencedColumnName: "id")]
+    #[ORM\ManyToMany(targetEntity: JobOffer::class)]
+    private Collection $likedJobs;
+
     #[ORM\ManyToOne(targetEntity: Section::class, inversedBy: "students")]
     private Section $section;
 
@@ -72,6 +78,23 @@ class Student
         $jobOffer->unsubscribeStudent($this);
         $this->appliedJobs->removeElement($jobOffer);
 
+        return $this;
+    }
+
+    public function likeJobOffer(JobOffer $jobOffer): Student
+    {
+        if ($this->likedJobs->contains($jobOffer)) return $this;
+
+        $this->likedJobs->add($jobOffer);
+
+        return $this;
+    }
+
+    public function dislikeJobOffer(JobOffer $jobOffer): Student
+    {
+        if (!$this->likedJobs->contains($jobOffer)) return $this;
+
+        $this->likedJobs->removeElement($jobOffer);
         return $this;
     }
 

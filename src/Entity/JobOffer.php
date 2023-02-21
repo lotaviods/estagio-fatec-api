@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\JobOfferRepository;
+use App\Repository\StudentRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -40,18 +41,20 @@ class JobOffer
     #[ORM\ManyToMany(targetEntity: Student::class, mappedBy: "appliedJobs")]
     private Collection $subscribedStudents;
 
+    #[ORM\JoinColumn(nullable: true)]
+    #[ORM\ManyToMany(targetEntity: Student::class, mappedBy: "likedJobs")]
+    private Collection $studentLikes;
+
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $role = null;
 
-    #[ORM\Column(length: 255, nullable: false, options: ['default' => 0])]
-    private ?int $likeCount = 0;
-
-    #[ORM\OneToOne(mappedBy: 'job_id', cascade: ['persist', 'remove'])]
+    #[ORM\OneToOne(mappedBy: 'job', cascade: ['persist', 'remove'])]
     private ?JobLocation $jobLocation = null;
 
     public function __construct()
     {
         $this->subscribedStudents = new ArrayCollection();
+        $this->studentLikes = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -120,11 +123,14 @@ class JobOffer
         $newArray = [
             "id" => $this->id,
             "description" => $this->description,
+            "role" => $this->role,
             "job_experience" => $this->job_experience,
             "company_id" => $this->company->getId(),
             "company_name" => $this->company->getName(),
+            "company_profile_picture" => $this->company->getProfilePicture(),
             "is_active" => $this->is_active,
-            "applied_students" => count($this->subscribedStudents)
+            "applied_students_count" => count($this->subscribedStudents),
+            "like_count" => $this->studentLikes->count()
         ];
         if ($this->promotionalImageUrl != null)
             $newArray += ["promotional_image_url" => $this->promotionalImageUrl];
@@ -132,6 +138,19 @@ class JobOffer
         if ($this->targetCourse != null) {
             $newArray += ["target_course" => $this->targetCourse->getName()];
         }
+
+        if ($this->jobLocation != null) {
+            $newArray += ["location" => $this->jobLocation->toArray()];
+        }
+
+        $studentLikeIdArray = [];
+        /** @var Student $student */
+
+        foreach ($this->studentLikes as $student) {
+            $studentLikeIdArray[] = $student->getId();
+        }
+
+        $newArray += ["liked_by" => $studentLikeIdArray];
 
         return $newArray;
     }
@@ -179,7 +198,7 @@ class JobOffer
         }
 
         // set the owning side of the relation if necessary
-        if ($jobLocation !== null && $jobLocation->getJobId() !== $this) {
+        if ($jobLocation !== null && $jobLocation->getJob() !== $this) {
             $jobLocation->setJobId($this);
         }
 

@@ -17,7 +17,7 @@ class JobLocation
     private ?JobOffer $job = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $Address = null;
+    private ?string $address = null;
 
     #[ORM\Column(length: 255)]
     private ?string $city = null;
@@ -33,26 +33,26 @@ class JobLocation
         return $this->id;
     }
 
-    public function getJobId(): ?JobOffer
+    public function getJob(): ?JobOffer
     {
-        return $this->job_id;
+        return $this->job;
     }
 
-    public function setJobId(?JobOffer $job_id): self
+    public function setJobId(?JobOffer $job): self
     {
-        $this->job_id = $job_id;
+        $this->job = $job;
 
         return $this;
     }
 
     public function getAddress(): ?string
     {
-        return $this->Address;
+        return $this->address;
     }
 
-    public function setAddress(string $Address): self
+    public function setAddress(string $address): self
     {
-        $this->Address = $Address;
+        $this->address = $address;
 
         return $this;
     }
@@ -91,5 +91,14 @@ class JobLocation
         $this->zip_code = $zip_code;
 
         return $this;
+    }
+
+    public function toArray()
+    {
+        return [
+            "id" => $this->id,
+            "address" => $this->address,
+            "city" => $this->city
+        ];
     }
 }

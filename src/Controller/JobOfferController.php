@@ -5,7 +5,9 @@ namespace App\Controller;
 use App\Entity\Company;
 use App\Entity\Course;
 use App\Entity\JobOffer;
+use App\Entity\Student;
 use App\Repository\JobOfferRepository;
+use App\Repository\StudentRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -34,6 +36,34 @@ class JobOfferController extends AbstractController
         }
 
         return new JsonResponse($jobsArray, Response::HTTP_OK, [], false);;
+    }
+
+    #[Route('/api/job-offer/{id}/like', name: 'like_job_offer', methods: ['POST'])]
+    public function likeJobOffer(ManagerRegistry $doctrine, Request $request): Response
+    {
+        $jobOfferId = $request->get("id");
+        $studentId = $request->get("student_id");
+
+        $shouldLike = $request->get("like");
+
+        $entityManager = $doctrine->getManager();
+
+        /** @var StudentRepository $studentRepo */
+        $studentRepo = $entityManager->getRepository(Student::class);
+        /** @var JobOfferRepository $jobRepo */
+        $jobRepo = $entityManager->getRepository(JobOffer::class);
+
+        $student = $studentRepo->find($studentId);
+        $job = $jobRepo->find($jobOfferId);
+
+        if ($shouldLike == "true") {
+            $student->likeJobOffer($job);
+            $studentRepo->save($student, true);
+            return new JsonResponse([], Response::HTTP_OK, [], false);
+        }
+        $student->dislikeJobOffer($job);
+        $studentRepo->save($student, true);
+        return new JsonResponse([], Response::HTTP_OK, [], false);
     }
 
     #[Route('/api/job-offer', name: 'create_job_offer', methods: ['POST'])]
@@ -67,7 +97,7 @@ class JobOfferController extends AbstractController
         $courseRepository = $entityManager->getRepository(Course::class);
         $targetCourse = $courseRepository->find($targetCourse);
 
-        if($targetCourse == null) return new
+        if ($targetCourse == null) return new
         JsonResponse(array('error' => "target course does not exist"),
             Response::HTTP_BAD_REQUEST, [], false);
 
@@ -97,6 +127,23 @@ class JobOfferController extends AbstractController
 
         foreach ($jobsResult as $job) {
             $jobsArray[] = $job->toArray();
+        }
+
+        return new JsonResponse($jobsArray, Response::HTTP_OK, [], false);;
+    }
+
+    #[Route('/api/job-offers/available/course/{course_id}', name: 'available-job-offers-course')]
+    public function getAvailableJobsFromCourse(ManagerRegistry $doctrine, Request $request): Response
+    {
+        $couseId = $request->get("course_id");
+        $entityManager = $doctrine->getManager();
+        $repository = $entityManager->getRepository(JobOffer::class);
+        $jobsResult = $repository->findAll();
+        $jobsArray = [];
+        /** @var JobOffer $job */
+        foreach ($jobsResult as $job) {
+            if ($job->isActive() && $job->getTargetCourse()->getId() == $couseId)
+                $jobsArray[] = $job->toArray();
         }
 
         return new JsonResponse($jobsArray, Response::HTTP_OK, [], false);;
