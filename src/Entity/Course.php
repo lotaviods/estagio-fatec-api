@@ -21,13 +21,17 @@ class Course
     #[ORM\OneToMany(mappedBy: 'targetCourse', targetEntity: JobOffer::class)]
     private Collection $jobOffer;
 
-    #[ORM\OneToMany(mappedBy: 'course', targetEntity: Section::class)]
-    private Collection $sections;
+    #[ORM\OneToMany(mappedBy: 'course', targetEntity: Semester::class)]
+    private Collection $semesters;
+
+    #[ORM\OneToMany(mappedBy: 'course', targetEntity: Student::class)]
+    private Collection $students;
 
     public function __construct()
     {
-        $this->sections = new ArrayCollection();
         $this->jobOffer = new ArrayCollection();
+        $this->semesters = new ArrayCollection();
+        $this->students = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -96,49 +100,42 @@ class Course
         return $this;
     }
 
-    /**
-     * @return Collection<int, Section>
-     */
-    public function getSections(): Collection
+    public function toArray(): array
     {
-        return $this->sections;
+        return [
+            "id" => $this->id,
+            "name" => $this->name,
+            "job_offers" => count($this->jobOffer)
+        ];
     }
 
-    public function addSection(Section $section): self
+    /**
+     * @return Collection<int, Semester>
+     */
+    public function getSemesters(): Collection
     {
-        if (!$this->sections->contains($section)) {
-            $this->sections->add($section);
-            $section->setCourse($this);
+        return $this->semesters;
+    }
+
+    public function addSemester(Semester $semester): self
+    {
+        if (!$this->semesters->contains($semester)) {
+            $this->semesters->add($semester);
+            $semester->setCourse($this);
         }
 
         return $this;
     }
 
-    public function removeSection(Section $section): self
+    public function removeSemester(Semester $semester): self
     {
-        if ($this->sections->removeElement($section)) {
+        if ($this->semesters->removeElement($semester)) {
             // set the owning side to null (unless already changed)
-            if ($section->getCourse() === $this) {
-                $section->setCourse(null);
+            if ($semester->getCourse() === $this) {
+                $semester->setCourse(null);
             }
         }
 
         return $this;
-    }
-
-    public function toArray(): array
-    {
-        $sectionArray = [];
-
-        foreach ($this->sections as $section) {
-            $sectionArray[] = $section->toArray();
-        }
-
-        return [
-            "id" => $this->id,
-            "name" => $this->name,
-            "job_offers" => count($this->jobOffer),
-            "sections" => $sectionArray
-        ];
     }
 }

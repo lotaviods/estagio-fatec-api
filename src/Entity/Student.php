@@ -36,8 +36,12 @@ class Student
     #[ORM\ManyToMany(targetEntity: JobOffer::class)]
     private Collection $likedJobs;
 
-    #[ORM\ManyToOne(targetEntity: Section::class, inversedBy: "students")]
-    private Section $section;
+    #[ORM\ManyToOne(inversedBy: 'students')]
+    private ?semester $semester = null;
+
+    #[ORM\ManyToOne(inversedBy: 'students')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?course $course = null;
 
     public function getId(): ?int
     {
@@ -121,20 +125,31 @@ class Student
         return [
             "name" => $this->name,
             "ra" => $this->ra,
-            "course" => $this->section->getCourse()->getName(),
             "email" => $this->email,
             "applied_jobs" => $jobArray
         ];
     }
 
-    public function getSection(): Section
+    public function getSemester(): ?semester
     {
-        return $this->section;
+        return $this->semester;
     }
 
-    public function setSection(?Section $section): self
+    public function setSemester(?semester $semester): self
     {
-        $this->section = $section;
+        $this->semester = $semester;
+
+        return $this;
+    }
+
+    public function getCourse(): ?course
+    {
+        return $this->course;
+    }
+
+    public function setCourse(?course $course): self
+    {
+        $this->course = $course;
 
         return $this;
     }
