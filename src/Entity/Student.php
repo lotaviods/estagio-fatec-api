@@ -37,11 +37,11 @@ class Student
     private Collection $likedJobs;
 
     #[ORM\ManyToOne(inversedBy: 'students')]
-    private ?semester $semester = null;
+    private ?Semester $semester = null;
 
     #[ORM\ManyToOne(inversedBy: 'students')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?course $course = null;
+    private ?Course $course = null;
 
     public function getId(): ?int
     {
