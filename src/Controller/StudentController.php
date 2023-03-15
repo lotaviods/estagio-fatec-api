@@ -68,7 +68,7 @@ class StudentController extends AbstractController
         return new JsonResponse($student->toArray(), Response::HTTP_OK, [], false);;
     }
 
-    #[Route('/api/student/job-offer/unsubscribe', name: 'unsubscribe-job-offer')]
+    #[Route('/api/student/job-offer/unsubscribe', name: 'unsubscribe-job-offer', methods: ['POST'])]
     public function unsubscribeToJobOffer(ManagerRegistry $doctrine, Request $request): Response
     {
         $entityManager = $doctrine->getManager();
