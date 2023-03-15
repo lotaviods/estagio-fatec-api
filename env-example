@@ -27,12 +27,16 @@ APP_ENV=dev
 #
 # DATABASE_URL=sqlite:///%kernel.project_dir%/data/database.sqlite
 #DATABASE_URL="mysql://db_user:db_password@127.0.0.1:3306/db_name?serverVersion=mariadb-10.5.8"
-DATABASE_URL="mysql://root:secret@db.fatec.estagio.com:3306/fatec-link-api?serverVersion=5.7"
+DATABASE_URL="mysql://root:secret@fatec-db:3306/fatec-link-api?serverVersion=5.7"
 # DATABASE_URL="postgresql://db_user:db_password@127.0.0.1:5432/db_name?serverVersion=13&charset=utf8"
 ###< doctrine/doctrine-bundle ###
 
 ###> symfony/mailer ###
 # MAILER_DSN=null://null
 ###< symfony/mailer ###
+
 LINK_FATEC_PORT=""
 MYSQL_ENTRYPOINT_INITDB="./mysql/docker-entrypoint-initdb.d"
+MYSQL_VOLUME_PATH_HOST="./var/data"
+MYSQL_PORT=""
+LINK_FATEC_DB_PASSWORD="secret"

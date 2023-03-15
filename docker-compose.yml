@@ -20,6 +20,29 @@ services:
       - "traefik.http.routers.estagio-fatec-api.entrypoints=default"
       - "traefik.docker.network=infra-estagio-network"
       - "traefik.enable=true"
+
+  fatec-db:
+    image: mysql:8.0-debian
+    container_name: "fatec-db"
+    command: --default-authentication-plugin=mysql_native_password
+    ports:
+      - "${MYSQL_PORT}:3306"
+    env_file:
+      - .env
+    restart: on-failure
+    networks:
+      - infra-estagio-network
+    environment:
+      MYSQL_ROOT_PASSWORD: ${LINK_FATEC_DB_PASSWORD}
+    volumes:
+      - ${MYSQL_VOLUME_PATH_HOST}:/var/lib/mysql
+    labels:
+      - "traefik.tcp.routers.fatec-db.rule=HostSNI(`db.fatec.estagio.com`)"
+      - "traefik.tcp.routers.fatec-db.entrypoints=db"
+      - "traefik.tcp.services.fatec-db.loadbalancer.server.port=${MYSQL_PORT}"
+      - "traefik.docker.network=infra-estagio-network"
+      - "traefik.enable=true"
+
 networks:
   infra-estagio-network:
-    external: true
+
