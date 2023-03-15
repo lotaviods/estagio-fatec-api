@@ -37,7 +37,7 @@ class StudentController extends AbstractController
     }
 
 
-    #[Route('/api/student/job-offer/subscribe', name: 'subscribe-job-offer')]
+    #[Route('/api/student/job-offer/subscribe', name: 'subscribe-job-offer', methods: ['POST'])]
     public function subscribeToJobOffer(ManagerRegistry $doctrine, Request $request): Response
     {
         $entityManager = $doctrine->getManager();
