@@ -35,7 +35,7 @@ class CourseController extends AbstractController
         return new JsonResponse($courseArray, Response::HTTP_OK, [], false);;
     }
 
-    #[Route('/api/course', name: 'create_couse')]
+    #[Route('/api/course', name: 'create_couse', methods: ['POST'])]
     public function createCourse(ManagerRegistry $doctrine, Request $request)
     {
         $name = $request->get("name");
