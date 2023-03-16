@@ -16,9 +16,6 @@ class Student
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $name = null;
-
-    #[ORM\Column(length: 255)]
     private ?string $ra = null;
 
     #[ORM\Column(length: 255)]
@@ -43,21 +40,13 @@ class Student
     #[ORM\JoinColumn(nullable: false)]
     private ?Course $course = null;
 
+    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?login $login = null;
+
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getName(): ?string
-    {
-        return $this->name;
-    }
-
-    public function setName(string $name): self
-    {
-        $this->name = $name;
-
-        return $this;
     }
 
     public function getAppliedJobOffers(): Collection
@@ -123,7 +112,6 @@ class Student
         }
 
         return [
-            "name" => $this->name,
             "ra" => $this->ra,
             "email" => $this->email,
             "applied_jobs" => $jobArray
@@ -152,5 +140,33 @@ class Student
         $this->course = $course;
 
         return $this;
+    }
+
+    public function getLogin(): ?login
+    {
+        return $this->login;
+    }
+
+    public function setLogin(login $login): self
+    {
+        $this->login = $login;
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getEmail(): ?string
+    {
+        return $this->email;
+    }
+
+    /**
+     * @param string|null $email
+     */
+    public function setEmail(?string $email): void
+    {
+        $this->email = $email;
     }
 }

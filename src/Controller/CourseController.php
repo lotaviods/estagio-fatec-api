@@ -38,6 +38,8 @@ class CourseController extends AbstractController
     #[Route('/api/course', name: 'create_couse', methods: ['POST'])]
     public function createCourse(ManagerRegistry $doctrine, Request $request)
     {
+        $this->denyAccessUnlessGranted('ROLE_ADM');
+
         $name = $request->get("name");
 
         if($name == null) return ResponseHelper::missingParameterResponse("name");

@@ -18,13 +18,14 @@ class Company
     #[ORM\OneToMany(mappedBy: 'company', targetEntity: JobOffer::class, orphanRemoval: true)]
     private Collection $job_offer;
 
-    #[ORM\Column(length: 255)]
-    private ?string $name = null;
-
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $profilePicture = null;
     #[ORM\Column]
     private ?bool $active = null;
+
+    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?login $login = null;
 
     public function __construct()
     {
@@ -104,5 +105,17 @@ class Company
     public function setProfilePicture(?string $profilePicture): void
     {
         $this->profilePicture = $profilePicture;
+    }
+
+    public function getLogin(): ?login
+    {
+        return $this->login;
+    }
+
+    public function setLogin(login $login): self
+    {
+        $this->login = $login;
+
+        return $this;
     }
 }

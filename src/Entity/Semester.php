@@ -35,7 +35,6 @@ class Semester
 
     public function __construct()
     {
-        $this->course = new ArrayCollection();
         $this->students = new ArrayCollection();
     }
 
@@ -44,28 +43,9 @@ class Semester
         return $this->id;
     }
 
-    /**
-     * @return Collection<int, course>
-     */
-    public function getCourse(): Collection
+    public function getCourse(): Course
     {
         return $this->course;
-    }
-
-    public function addCourse(course $course): self
-    {
-        if (!$this->course->contains($course)) {
-            $this->course->add($course);
-        }
-
-        return $this;
-    }
-
-    public function removeCourse(course $course): self
-    {
-        $this->course->removeElement($course);
-
-        return $this;
     }
 
     public function getInitialDate(): ?\DateTimeInterface

@@ -22,16 +22,26 @@ class StudentController extends AbstractController
     #[Route('/api/student/detail', name: 'student-detail')]
     public function getStudentDetail(ManagerRegistry $doctrine, Request $request): Response
     {
-        $entityManager = $doctrine->getManager();
-
         $studentId = $request->get("student_id");
         $hasStudentId = $studentId !== null;
 
-        if(!$hasStudentId) return ResponseHelper::missingParameterResponse("student_id");
+        if (!$hasStudentId) return ResponseHelper::missingParameterResponse("student_id");
 
-        $repository = $entityManager->getRepository(Student::class);
+        $repository = $doctrine->getRepository(Student::class);
         /** @var Student $student */
         $student = $repository->find($studentId);
+
+        if (!$student) return new JsonResponse([], Response::HTTP_BAD_REQUEST, [], false);
+
+        $qb = $doctrine->getManager()->createQueryBuilder();
+
+        $studentLogin = $this->getUser();
+
+        if ($student->getLogin()->getId() !== $studentLogin->getId())
+            return new JsonResponse([], 401);
+
+        $entityManager = $doctrine->getManager();
+
 
         return new JsonResponse($student->toArray(), Response::HTTP_OK, [], false);;
     }
@@ -47,8 +57,8 @@ class StudentController extends AbstractController
         $hasJobId = $jobId !== null;
         $hasStudentId = $studentId !== null;
 
-        if(!$hasJobId) return ResponseHelper::missingParameterResponse("job_id");
-        if(!$hasStudentId) return ResponseHelper::missingParameterResponse("student_id");
+        if (!$hasJobId) return ResponseHelper::missingParameterResponse("job_id");
+        if (!$hasStudentId) return ResponseHelper::missingParameterResponse("student_id");
 
         $jobRepository = $entityManager->getRepository(JobOffer::class);
         $repository = $entityManager->getRepository(Student::class);
@@ -56,8 +66,8 @@ class StudentController extends AbstractController
         /** @var JobOffer $job */
         $job = $jobRepository->find($jobId);
 
-        if($job == null) return new JsonResponse(array('error' => "job offer must exist"));
-        if(!$job->isActive()) return new JsonResponse(array('error' => "job offer must be active"));
+        if ($job == null) return new JsonResponse(array('error' => "job offer must exist"));
+        if (!$job->isActive()) return new JsonResponse(array('error' => "job offer must be active"));
 
         /** @var Student $student */
         $student = $repository->find($studentId);
@@ -78,15 +88,15 @@ class StudentController extends AbstractController
         $hasJobId = $jobId !== null;
         $hasStudentId = $studentId !== null;
 
-        if(!$hasJobId) return ResponseHelper::missingParameterResponse("job_id");
-        if(!$hasStudentId) return ResponseHelper::missingParameterResponse("student_id");
+        if (!$hasJobId) return ResponseHelper::missingParameterResponse("job_id");
+        if (!$hasStudentId) return ResponseHelper::missingParameterResponse("student_id");
 
         $jobRepository = $entityManager->getRepository(JobOffer::class);
         $repository = $entityManager->getRepository(Student::class);
 
         $job = $jobRepository->find($jobId);
 
-        if($job == null) return new JsonResponse(array('error' => "job offer must exist"));
+        if ($job == null) return new JsonResponse(array('error' => "job offer must exist"));
 
         /** @var Student $student */
         $student = $repository->find($studentId);

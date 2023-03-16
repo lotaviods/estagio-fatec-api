@@ -15,8 +15,11 @@
         "symfony/dotenv": "6.2.*",
         "symfony/flex": "^2",
         "symfony/framework-bundle": "6.2.*",
+        "symfony/password-hasher": "6.2.*",
         "symfony/runtime": "6.2.*",
-        "symfony/yaml": "6.2.*"
+        "symfony/security-bundle": "6.2.*",
+        "symfony/yaml": "6.2.*",
+      "ext-mysql_xdevapi": "*"
     },
     "require-dev": {
         "symfony/maker-bundle": "^1.48"

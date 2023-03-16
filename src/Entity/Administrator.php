@@ -13,8 +13,9 @@ class Administrator
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $name = null;
+    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?login $login = null;
 
     public function getId(): ?int
     {
@@ -29,6 +30,18 @@ class Administrator
     public function setName(string $name): self
     {
         $this->name = $name;
+
+        return $this;
+    }
+
+    public function getLogin(): ?login
+    {
+        return $this->login;
+    }
+
+    public function setLogin(login $login): self
+    {
+        $this->login = $login;
 
         return $this;
     }
