@@ -11,6 +11,7 @@
         "doctrine/doctrine-bundle": "^2.7",
         "doctrine/doctrine-migrations-bundle": "^3.2",
         "doctrine/orm": "^2.14",
+        "nelmio/cors-bundle": "^2.3",
         "symfony/console": "6.2.*",
         "symfony/dotenv": "6.2.*",
         "symfony/flex": "^2",
@@ -18,8 +19,7 @@
         "symfony/password-hasher": "6.2.*",
         "symfony/runtime": "6.2.*",
         "symfony/security-bundle": "6.2.*",
-        "symfony/yaml": "6.2.*",
-      "ext-mysql_xdevapi": "*"
+        "symfony/yaml": "6.2.*"
     },
     "require-dev": {
         "symfony/maker-bundle": "^1.48"
