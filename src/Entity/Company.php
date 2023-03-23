@@ -27,6 +27,9 @@ class Company
     #[ORM\JoinColumn(nullable: false)]
     private ?login $login = null;
 
+    #[ORM\Column(length: 255)]
+    private ?string $name = null;
+
     public function __construct()
     {
         $this->job_offer = new ArrayCollection();
