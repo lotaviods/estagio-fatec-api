@@ -33,19 +33,15 @@ class Student
     #[ORM\ManyToMany(targetEntity: JobOffer::class)]
     private Collection $likedJobs;
 
-    #[ORM\ManyToOne(inversedBy: 'students')]
-    private ?Semester $semester = null;
-
-    #[ORM\ManyToOne(inversedBy: 'students')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Course $course = null;
-
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(nullable: false)]
     private ?login $login = null;
 
     #[ORM\Column(length: 255)]
     private ?string $name = null;
+
+    #[ORM\ManyToOne(inversedBy: 'students')]
+    private ?CollageClass $collageClass = null;
 
     public function getId(): ?int
     {
@@ -121,29 +117,6 @@ class Student
         ];
     }
 
-    public function getSemester(): ?semester
-    {
-        return $this->semester;
-    }
-
-    public function setSemester(?semester $semester): self
-    {
-        $this->semester = $semester;
-
-        return $this;
-    }
-
-    public function getCourse(): ?course
-    {
-        return $this->course;
-    }
-
-    public function setCourse(?course $course): self
-    {
-        $this->course = $course;
-
-        return $this;
-    }
 
     public function getLogin(): ?login
     {
@@ -181,6 +154,18 @@ class Student
     public function setName(string $name): self
     {
         $this->name = $name;
+
+        return $this;
+    }
+
+    public function getCollageClass(): ?CollageClass
+    {
+        return $this->collageClass;
+    }
+
+    public function setCollageClass(?CollageClass $collageClass): self
+    {
+        $this->collageClass = $collageClass;
 
         return $this;
     }

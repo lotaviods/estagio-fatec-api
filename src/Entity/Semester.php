@@ -16,13 +16,6 @@ class Semester
     #[ORM\Column]
     private ?int $id = null;
 
-
-    #[ORM\Column(type: Types::DATE_MUTABLE)]
-    private ?\DateTimeInterface $initial_date = null;
-
-    #[ORM\Column(type: Types::DATE_MUTABLE)]
-    private ?\DateTimeInterface $final_date = null;
-
     #[ORM\Column]
     private ?int $number = null;
 
@@ -33,9 +26,16 @@ class Semester
     #[ORM\OneToMany(mappedBy: 'semester', targetEntity: Student::class)]
     private Collection $students;
 
+    #[ORM\OneToMany(mappedBy: 'semester', targetEntity: CollageClass::class)]
+    private Collection $collageClasses;
+
+    #[ORM\Column(length: 255)]
+    private ?string $description = null;
+
     public function __construct()
     {
         $this->students = new ArrayCollection();
+        $this->collageClasses = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -46,30 +46,6 @@ class Semester
     public function getCourse(): Course
     {
         return $this->course;
-    }
-
-    public function getInitialDate(): ?\DateTimeInterface
-    {
-        return $this->initial_date;
-    }
-
-    public function setInitialDate(\DateTimeInterface $initial_date): self
-    {
-        $this->initial_date = $initial_date;
-
-        return $this;
-    }
-
-    public function getFinalDate(): ?\DateTimeInterface
-    {
-        return $this->final_date;
-    }
-
-    public function setFinalDate(\DateTimeInterface $final_date): self
-    {
-        $this->final_date = $final_date;
-
-        return $this;
     }
 
     public function getNumber(): ?int
@@ -117,6 +93,48 @@ class Semester
                 $student->setSemester(null);
             }
         }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, CollageClass>
+     */
+    public function getCollageClasses(): Collection
+    {
+        return $this->collageClasses;
+    }
+
+    public function addCollageClass(CollageClass $collageClass): self
+    {
+        if (!$this->collageClasses->contains($collageClass)) {
+            $this->collageClasses->add($collageClass);
+            $collageClass->setSemester($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCollageClass(CollageClass $collageClass): self
+    {
+        if ($this->collageClasses->removeElement($collageClass)) {
+            // set the owning side to null (unless already changed)
+            if ($collageClass->getSemester() === $this) {
+                $collageClass->setSemester(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(string $description): self
+    {
+        $this->description = $description;
 
         return $this;
     }
