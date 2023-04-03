@@ -35,13 +35,13 @@ Setup
 
 - Install the project dependencies:
 
-        docker exec -it estagio_fatec_api  /bin/bash
+        docker exec -it estagio-fatec-api  /bin/bash
 
         composer install
 
 - Run the database:
 
-        docker exec -it estagio_fatec_api  /bin/bash
+        docker exec -it estagio-fatec-api  /bin/bash
 
         php bin/console doctrine:database:create
 
