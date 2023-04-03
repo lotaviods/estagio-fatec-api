@@ -18,9 +18,6 @@ use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
-use const App\Constants\ADMIN;
-use const App\Constants\COMPANY;
-use const App\Constants\STUDENT;
 
 class LoginController extends AbstractController
 {
