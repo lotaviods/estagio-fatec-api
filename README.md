@@ -7,52 +7,59 @@
 
 <img src="./images/fatec_logo.png" alt="logo" style="width:250px;height:72px;">
 
+- [FATEC Internship Management API](#fatec-internship-management-api)
+    - [Description](#description)
+    - [Prerequisites](#prerequisites)
+    - [Setup](#setup)
+    - [License](#license)
+
+## Description
+
 Our API is designed to provide easy access to up-to-date information about student internships, including internship
 applications, approvals, placements, and evaluations. With FATEC Internship Management API, developers can easily build
 web or mobile applications that enable students, faculty, and administrators to manage internships more efficiently.
 
-
 This guide will walk you through setting up a Symfony project with Docker for development.
 
-Prerequisites
+## Prerequisites
 
     Docker and Docker Compose installed on your machine.
 
-Setup
+## Setup
 
 - Clone the project repository:
 
-        git clone git@github.com:lotaviods/link-fatec-api.git
+   ```bash
+  git clone git@github.com:lotaviods/link-fatec-api.git
 
-
-- Copy the .env.dist file to .env:
-
-        cp .env-example .env
+- Copy the .env-example file to .env:
+  ```bash
+  cp .env-example .env
 
 - Build and start the Docker containers:
-
-        docker-compose up --build
+  ```bash
+  docker-compose up --build
 
 - Install the project dependencies:
+  ```bash
+  docker exec -it estagio-fatec-api  /bin/bash
 
-        docker exec -it estagio-fatec-api  /bin/bash
-
-        composer install
+  composer install
 
 - Run the database:
-
-        docker exec -it estagio-fatec-api  /bin/bash
-
-        php bin/console doctrine:database:create
-
-        php bin/console doctrine:schema:update --complete --force
+  ```bash
+  docker exec -it estagio-fatec-api  /bin/bash
+  
+  php bin/console doctrine:database:create
+  
+  php bin/console doctrine:schema:update --complete --force
 
 The server will automatically reload any changes you make to the code.
 Stopping the Containers
 
 - To stop the Docker containers, run the following command:
-
-        docker-compose down
+  ```bash
+  docker-compose down
 
 ## License
 
