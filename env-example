@@ -35,8 +35,8 @@ DATABASE_URL="mysql://root:secret@fatec-db:3306/fatec-link-api?serverVersion=5.7
 # MAILER_DSN=null://null
 ###< symfony/mailer ###
 
-LINK_FATEC_PORT=""
+LINK_FATEC_PORT="8080"
 MYSQL_ENTRYPOINT_INITDB="./mysql/docker-entrypoint-initdb.d"
 MYSQL_VOLUME_PATH_HOST="./var/data"
-MYSQL_PORT=""
+MYSQL_PORT="3306"
 LINK_FATEC_DB_PASSWORD="secret"
