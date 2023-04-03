@@ -87,6 +87,6 @@ class AccessToken
 
     public function getUserId(): string
     {
-        return $this->getUser()?->getUsername();
+        return $this->getUser()?->getEmail();
     }
 }

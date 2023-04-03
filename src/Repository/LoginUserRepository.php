@@ -82,18 +82,18 @@ class LoginUserRepository extends ServiceEntityRepository implements PasswordUpg
 //            ->getOneOrNullResult()
 //        ;
 //    }
-    public function refreshUser(UserInterface $user)
+    public function refreshUser(UserInterface $user): UserInterface
     {
-        return $this->loadUserByIdentifier($user->getUsername());
+        return $this->loadUserByIdentifier($user->getEmail());
     }
 
-    public function supportsClass(string $class)
+    public function supportsClass(string $class): bool
     {
         return $class === Login::class;
     }
 
     public function loadUserByIdentifier(string $identifier): UserInterface
     {
-        return $this->findOneBy(['username' => $identifier]);
+        return $this->findOneBy(['email' => $identifier]);
     }
 }

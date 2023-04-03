@@ -47,20 +47,21 @@ class LoginController extends AbstractController
     #[Route('api/student/register', name: 'register', methods: ['POST'])]
     public function register(Request $request, UserPasswordHasherInterface $passwordHasher, ManagerRegistry $doctrine): JsonResponse
     {
+        //TODO make link student to class
+
+        $email = $request->get("email");
         $username = $request->get("username");
         $password = $request->get("password");
-        $courseId = $request->get("course_id");
         $ra = $request->get("ra");
         $name = $request->get("full_name");
-        $email = $request->get("email");
-
 
         try {
             $login = $this->createLogin($doctrine,
-                $username,
+                $email,
                 $password,
                 $passwordHasher,
-                LoginType::STUDENT
+                LoginType::STUDENT,
+                $username
             );
 
             $login->setRoles(["ROLE_STUDENT"]);
@@ -68,11 +69,8 @@ class LoginController extends AbstractController
             $accessToken = $this->createTokenByUser($doctrine, $login);
             $student = new Student();
 
-            $course = $doctrine->getRepository(Course::class)->find($courseId);
-
             $student->setLogin($login);
             $student->setName($name);
-            $student->setCourse($course);
             $student->setRa($ra);
             $student->setEmail($email);
 
@@ -80,7 +78,7 @@ class LoginController extends AbstractController
             $entityManager->persist($student);
             $entityManager->flush();
 
-        } catch (Exception) {
+        } catch (\Exception) {
             return $this->json(['message' => 'An Unexpected error occurred'], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
@@ -111,10 +109,11 @@ class LoginController extends AbstractController
 
     private function createLogin(
         ManagerRegistry $doctrine,
-        string          $username,
+        string          $email,
         string          $password,
                         $passwordHasher,
         int             $loginType,
+        string          $username
     ): Login
     {
         $login = new Login();
@@ -125,9 +124,10 @@ class LoginController extends AbstractController
             $password
         );
 
-        $login->setUsername($username);
+        $login->setEmail($email);
         $login->setPassword($hashedPassword);
         $login->setType($loginType);
+        $login->setUsername($username);
 
         // Persist the user to the database
         $entityManager = $doctrine->getManager();
