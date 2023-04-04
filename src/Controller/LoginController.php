@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\DTO\LoginDTO;
+use App\Mapper\AdminMapper;
 use App\Mapper\StudentMapper;
 use App\Service\AuthService;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -22,12 +23,21 @@ class LoginController extends AbstractController
         return $this->json(['token' => $accessToken->getAccessToken()]);
     }
 
-    #[Route('api/student/register', name: 'register', methods: ['POST'])]
-    public function register(Request $request, AuthService $service): JsonResponse
+    #[Route('api/student/register', name: 'studentRegister', methods: ['POST'])]
+    public function studentRegister(Request $request, AuthService $service): JsonResponse
     {
         //TODO make link student to class
         $accessToken = $service->registerStudent(StudentMapper::fromRequest($request), LoginDTO::fromRequest($request));
 
         return $this->json(['message' => 'User created successfully', 'token' => $accessToken->getAccessToken()], Response::HTTP_CREATED);
+    }
+
+    #[Route('api/admin/register', name: 'adminRegister', methods: ['POST'])]
+    public function adminRegister(Request $request, AuthService $service): JsonResponse
+    {
+        //TODO make link student to class
+        $accessToken = $service->registerAdmin(token: $request->get("invite_token"), loginDTO: LoginDTO::fromRequest($request), admin: AdminMapper::fromRequest($request));
+
+        return $this->json(['message' => 'Admin created successfully', 'token' => $accessToken->getAccessToken()], Response::HTTP_CREATED);
     }
 }

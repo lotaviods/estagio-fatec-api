@@ -18,8 +18,8 @@ class AccessToken
     #[ORM\Column(type: Types::STRING)]
     private string $accessToken;
 
-    #[ORM\Column(type: Types::DATE_MUTABLE)]
-    private ?\DateTimeInterface $expiresAt;
+    #[ORM\Column(type: Types::DATETIMETZ_MUTABLE)]
+    private ?\DateTime $expiresAt;
 
     #[ORM\ManyToOne(targetEntity: Login::class)]
     #[ORM\JoinColumn(name: "id_user", referencedColumnName: "id", nullable: false, onDelete: 'CASCADE')]
@@ -42,17 +42,17 @@ class AccessToken
     }
 
     /**
-     * @return \DateTimeInterface|null
+     * @return \DateTime|null
      */
-    public function getExpiresAt(): ?\DateTimeInterface
+    public function getExpiresAt(): ?\DateTime
     {
         return $this->expiresAt;
     }
 
     /**
-     * @param \DateTimeInterface|null $expiresAt
+     * @param \DateTime|null $expiresAt
      */
-    public function setExpiresAt(?\DateTimeInterface $expiresAt): void
+    public function setExpiresAt(?\DateTime $expiresAt): void
     {
         $this->expiresAt = $expiresAt;
     }

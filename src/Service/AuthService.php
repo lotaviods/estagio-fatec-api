@@ -5,11 +5,13 @@ namespace App\Service;
 use App\Constants\LoginType;
 use App\DTO\LoginDTO;
 use App\Entity\AccessToken;
+use App\Entity\Administrator;
+use App\Entity\AdminCreationInvite;
 use App\Entity\Login;
 use App\Entity\Student;
+use App\Repository\AdministratorRepository;
 use Doctrine\Persistence\ManagerRegistry;
-use StudentMapper;
-use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Core\Exception\BadCredentialsException;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
@@ -78,21 +80,54 @@ class AuthService
         return $login;
     }
 
-    public function registerStudent(Student $student, LoginDTO $dto): AccessToken
+    public function registerStudent(Student $student, LoginDTO $dto, int $type = LoginType::STUDENT): AccessToken
     {
         //TODO Add more types of register not only student
 
         $login = $this->createLogin(
-            $student->getEmail(),
+            $dto->getEmail(),
             $dto->getPassword(),
             $dto->getName(),
-            LoginType::STUDENT,
+            $type,
         );
 
         $student->setLogin($login);
 
         $entityManager = $this->doctrine->getManager();
         $entityManager->persist($student);
+        $entityManager->flush();
+
+        return $this->createTokenByUser($login);
+    }
+
+    public function registerAdmin(string $token, LoginDTO $loginDTO, Administrator $admin): AccessToken
+    {
+        $type = LoginType::ADMIN;
+
+        $manager = $this->doctrine->getManager();
+
+        /** @var AdministratorRepository $adminRepo */
+        $adminRepo = $manager->getRepository(AdminCreationInvite::class);
+
+        /** @var AdminCreationInvite $invite */
+        $invite = $adminRepo->findOneBy(['token' =>$token]);
+
+        if(!$invite)
+            throw new UnauthorizedHttpException('token');
+        if($invite->isExpired())
+            throw new UnauthorizedHttpException('token');
+
+        $login = $this->createLogin(
+            $loginDTO->getEmail(),
+            $loginDTO->getPassword(),
+            $loginDTO->getName(),
+            $type,
+        );
+
+        $admin->setLogin($login);
+
+        $entityManager = $this->doctrine->getManager();
+        $entityManager->persist($admin);
         $entityManager->flush();
 
         return $this->createTokenByUser($login);

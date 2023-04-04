@@ -1,11 +1,8 @@
 <?php
 namespace App\Security;
 
-use App\Entity\AccessToken;
-use App\Entity\Login;
 use App\Repository\AccessTokenRepository;
 use Symfony\Component\Security\Core\Exception\BadCredentialsException;
-use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Http\AccessToken\AccessTokenHandlerInterface;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
 

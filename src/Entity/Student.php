@@ -18,9 +18,6 @@ class Student
     #[ORM\Column(length: 255)]
     private ?string $ra = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $email = null;
-
     #[ORM\JoinTable(name: 'student_applied_jobs')]
     #[ORM\JoinColumn('student_id', referencedColumnName: "id")]
     #[ORM\InverseJoinColumn(name: 'job_id', referencedColumnName: "id")]
@@ -125,22 +122,6 @@ class Student
         $this->login = $login;
 
         return $this;
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getEmail(): ?string
-    {
-        return $this->email;
-    }
-
-    /**
-     * @param string|null $email
-     */
-    public function setEmail(?string $email): void
-    {
-        $this->email = $email;
     }
 
     public function getCollageClass(): ?CollageClass
