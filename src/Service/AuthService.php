@@ -60,7 +60,7 @@ class AuthService
         return $accessToken;
     }
 
-    public function createLogin(string $email, string $password, int $type): Login
+    public function createLogin(string $email, string $password, string $name, int $type): Login
     {
         $login = new Login();
         $login->setEmail($email);
@@ -68,6 +68,7 @@ class AuthService
         $hashedPassword = $this->passwordHasher->hashPassword($login, $password);
 
         $login->setPassword($hashedPassword);
+        $login->setName($name);
         $login->SetType($type);
 
         $entityManager = $this->doctrine->getManager();
@@ -77,13 +78,14 @@ class AuthService
         return $login;
     }
 
-    public function registerStudent(Student $student, LoginDTO $fromRequest): AccessToken
+    public function registerStudent(Student $student, LoginDTO $dto): AccessToken
     {
         //TODO Add more types of register not only student
 
         $login = $this->createLogin(
             $student->getEmail(),
-            $fromRequest->getPassword(),
+            $dto->getPassword(),
+            $dto->getName(),
             LoginType::STUDENT,
         );
 

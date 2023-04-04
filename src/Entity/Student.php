@@ -34,11 +34,8 @@ class Student
     private Collection $likedJobs;
 
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?login $login = null;
-
-    #[ORM\Column(length: 255)]
-    private ?string $name = null;
+    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
+    private ?Login $login = null;
 
     #[ORM\ManyToOne(inversedBy: 'students')]
     private ?CollageClass $collageClass = null;
@@ -144,18 +141,6 @@ class Student
     public function setEmail(?string $email): void
     {
         $this->email = $email;
-    }
-
-    public function getName(): ?string
-    {
-        return $this->name;
-    }
-
-    public function setName(string $name): self
-    {
-        $this->name = $name;
-
-        return $this;
     }
 
     public function getCollageClass(): ?CollageClass

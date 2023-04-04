@@ -27,9 +27,6 @@ class Company
     #[ORM\JoinColumn(nullable: false)]
     private ?login $login = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $name = null;
-
     public function __construct()
     {
         $this->job_offer = new ArrayCollection();
@@ -66,18 +63,6 @@ class Company
                 $jobOffer->setCompany(null);
             }
         }
-
-        return $this;
-    }
-
-    public function getName(): ?string
-    {
-        return $this->name;
-    }
-
-    public function setName(string $name): self
-    {
-        $this->name = $name;
 
         return $this;
     }

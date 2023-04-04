@@ -27,6 +27,9 @@ class Login implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?int $type = null;
 
+    #[ORM\Column(length: 255)]
+    private ?string $name = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -105,6 +108,18 @@ class Login implements UserInterface, PasswordAuthenticatedUserInterface
     public function setType(int $type): self
     {
         $this->type = $type;
+
+        return $this;
+    }
+
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function setName(string $name): self
+    {
+        $this->name = $name;
 
         return $this;
     }

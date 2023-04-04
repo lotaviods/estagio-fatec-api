@@ -10,7 +10,6 @@ class StudentMapper
     public static function fromRequest(Request $request): Student
     {
         $student = new Student();
-        $student->setName($request->get("full_name"));
         $student->setEmail($request->get("email"));
         $student->setRa($request->get("ra"));
 
