@@ -21,7 +21,7 @@ class Semester
 
     #[ORM\ManyToOne(inversedBy: 'semesters')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?course $course = null;
+    private ?Course $course = null;
 
     #[ORM\OneToMany(mappedBy: 'semester', targetEntity: Student::class)]
     private Collection $students;
