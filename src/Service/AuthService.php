@@ -102,7 +102,7 @@ class AuthService
         return $this->createTokenByUser($login);
     }
 
-    public function registerAdmin(string $token, LoginDTO $loginDTO, Administrator $admin): AccessToken
+    public function registerInvitedAdmin(string $token, LoginDTO $loginDTO, Administrator $admin): void
     {
         $type = LoginType::ADMIN;
 
@@ -119,12 +119,25 @@ class AuthService
         if($invite->isExpired())
             throw new UnauthorizedHttpException('token');
 
+        $this->createAdminLogin($loginDTO, $type, $admin);
+    }
+
+    public function registerAdmin(LoginDTO $loginDTO, Administrator $admin): void
+    {
+        $type = LoginType::ADMIN;
+
+        $this->createAdminLogin($loginDTO, $type, $admin);
+    }
+
+    public function createAdminLogin(LoginDTO $loginDTO, int $type, Administrator $admin): void
+    {
         $login = $this->createLogin(
             $loginDTO->getEmail(),
             $loginDTO->getPassword(),
             $loginDTO->getName(),
             $type,
         );
+
         $login->setRoles(["ROLE_ADMIN"]);
         $admin->setLogin($login);
 
@@ -132,7 +145,5 @@ class AuthService
         $entityManager->persist($admin);
         $entityManager->persist($login);
         $entityManager->flush();
-
-        return $this->createTokenByUser($login);
     }
 }

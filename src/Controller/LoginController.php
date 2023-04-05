@@ -27,7 +27,7 @@ class LoginController extends AbstractController
         );
     }
 
-    #[Route('api/student/register', name: 'studentRegister', methods: ['POST'])]
+    #[Route('api/register/student', name: 'studentRegister', methods: ['POST'])]
     public function studentRegister(Request $request, AuthService $service): JsonResponse
     {
         //TODO make link student to class
@@ -36,12 +36,21 @@ class LoginController extends AbstractController
         return $this->json(['message' => 'User created successfully', 'token' => ['access_token' => $accessToken->getAccessToken(), 'expires_at' => $accessToken->getExpiresAt()->format(DateTimeInterface::ATOM)]], Response::HTTP_CREATED);
     }
 
-    #[Route('api/admin/register', name: 'adminRegister', methods: ['POST'])]
+    #[Route('api/register/admin/invitation', name: 'adminInvitationRegister', methods: ['POST'])]
+    public function adminInvitedRegister(Request $request, AuthService $service): JsonResponse
+    {
+        $service->registerInvitedAdmin(token: $request->get("invite_token"), loginDTO: LoginDTO::fromRequest($request), admin: AdminMapper::fromRequest($request));
+
+        return $this->json([], Response::HTTP_CREATED);
+    }
+
+    #[Route('api/register/admin', name: 'adminRegister', methods: ['POST'])]
     public function adminRegister(Request $request, AuthService $service): JsonResponse
     {
-        //TODO make link student to class
-        $accessToken = $service->registerAdmin(token: $request->get("invite_token"), loginDTO: LoginDTO::fromRequest($request), admin: AdminMapper::fromRequest($request));
+        $this->denyAccessUnlessGranted('ROLE_ADM');
 
-        return $this->json(['message' => 'Admin created successfully', 'token' => ['access_token' => $accessToken->getAccessToken(), 'expires_at' => $accessToken->getExpiresAt()->format(DateTimeInterface::ATOM)]], Response::HTTP_CREATED);
+        $service->registerAdmin(loginDTO: LoginDTO::fromRequest($request), admin: AdminMapper::fromRequest($request));
+
+        return $this->json([], Response::HTTP_CREATED);
     }
 }
