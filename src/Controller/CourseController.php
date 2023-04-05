@@ -41,6 +41,7 @@ class CourseController extends AbstractController
         $this->denyAccessUnlessGranted('ROLE_ADM');
 
         $name = $request->get("name");
+        $description = $request->get("description");
 
         if($name == null) return ResponseHelper::missingParameterResponse("name");
 
@@ -51,6 +52,7 @@ class CourseController extends AbstractController
         $course = new Course();
 
         $course->setName($name);
+        $course->setDescription($description);
 
         /** @var CourseRepository $repository */
         $repository->save($course, true);
