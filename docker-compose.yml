@@ -11,6 +11,7 @@ services:
       - .env
     ports:
       - "${LINK_FATEC_PORT}:80"
+      - "${LINK_FATEC_XDEBUG_PORT}:9000"
     volumes:
       - .:/var/www/html
     networks:
