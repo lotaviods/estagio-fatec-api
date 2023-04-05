@@ -7,6 +7,7 @@ use App\DTO\LoginDTO;
 use App\Entity\AccessToken;
 use App\Entity\Administrator;
 use App\Entity\AdminCreationInvite;
+use App\Entity\Company;
 use App\Entity\Login;
 use App\Entity\Student;
 use App\Repository\AdministratorRepository;
@@ -68,18 +69,22 @@ class AuthService
 
     public function createLogin(string $email, string $password, string $name, int $type): Login
     {
-        $login = new Login();
-        $login->setEmail($email);
+        try {
+            $login = new Login();
+            $login->setEmail($email);
 
-        $hashedPassword = $this->passwordHasher->hashPassword($login, $password);
+            $hashedPassword = $this->passwordHasher->hashPassword($login, $password);
 
-        $login->setPassword($hashedPassword);
-        $login->setName($name);
-        $login->SetType($type);
+            $login->setPassword($hashedPassword);
+            $login->setName($name);
+            $login->SetType($type);
 
-        $entityManager = $this->doctrine->getManager();
-        $entityManager->persist($login);
-        $entityManager->flush();
+            $entityManager = $this->doctrine->getManager();
+            $entityManager->persist($login);
+            $entityManager->flush();
+        } catch (\Exception) {
+            throw new BadRequestHttpException();
+        }
 
         return $login;
     }
@@ -99,8 +104,8 @@ class AuthService
         $student->setLogin($login);
 
         $entityManager = $this->doctrine->getManager();
-        $entityManager->persist($student);
         $entityManager->persist($login);
+        $entityManager->persist($student);
         $entityManager->flush();
     }
 
@@ -144,8 +149,30 @@ class AuthService
         $admin->setLogin($login);
 
         $entityManager = $this->doctrine->getManager();
-        $entityManager->persist($admin);
         $entityManager->persist($login);
+        $entityManager->persist($admin);
         $entityManager->flush();
+    }
+
+    public function registerCompany(LoginDTO $loginDTO, Company $company): void
+    {
+        $type = LoginType::COMPANY;
+
+        $login = $this->createLogin(
+            $loginDTO->getEmail(),
+            $loginDTO->getPassword(),
+            $loginDTO->getName(),
+            $type,
+        );
+
+        $login->setRoles(["ROLE_COMPANY"]);
+
+        $company->setLogin($login);
+
+        $entityManager = $this->doctrine->getManager();
+        $entityManager->persist($login);
+        $entityManager->persist($company);
+        $entityManager->flush();
+
     }
 }

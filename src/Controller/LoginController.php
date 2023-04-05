@@ -3,7 +3,9 @@
 namespace App\Controller;
 
 use App\DTO\LoginDTO;
+use App\Entity\Company;
 use App\Mapper\AdminMapper;
+use App\Mapper\CompanyMapper;
 use App\Mapper\StudentMapper;
 use App\Service\AuthService;
 use DateTime;
@@ -49,6 +51,16 @@ class LoginController extends AbstractController
         $this->denyAccessUnlessGranted('ROLE_ADM');
 
         $service->registerAdmin(loginDTO: LoginDTO::fromRequest($request), admin: AdminMapper::fromRequest($request));
+
+        return $this->json([], Response::HTTP_CREATED);
+    }
+
+    #[Route('api/register/company', name: 'adminRegister', methods: ['POST'])]
+    public function companyRegister(Request $request, AuthService $service): JsonResponse
+    {
+        $this->denyAccessUnlessGranted('ROLE_ADM');
+
+        $service->registerCompany(loginDTO: LoginDTO::fromRequest($request), company: CompanyMapper::fromRequest($request));
 
         return $this->json([], Response::HTTP_CREATED);
     }
