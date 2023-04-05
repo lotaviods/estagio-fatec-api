@@ -106,4 +106,9 @@ class Company
 
         return $this;
     }
+
+    public function getName(): ?string
+    {
+        return $this->login->getName();
+    }
 }

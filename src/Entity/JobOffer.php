@@ -125,7 +125,7 @@ class JobOffer
             "role" => $this->role,
             "job_experience" => $this->job_experience,
             "company_id" => $this->company->getId(),
-            "company_name" => $this->company->getName(),
+            "company_name" => $this->company->getName() ?? "",
             "company_profile_picture" => $this->company->getProfilePicture(),
             "is_active" => $this->is_active,
             "applied_students_count" => count($this->subscribedStudents),
