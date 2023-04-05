@@ -67,9 +67,11 @@ class AuthService
         return $accessToken;
     }
 
-    public function createLogin(string $email, string $password, string $name, int $type): Login
+    public function createLogin(?string $email, ?string $password, ?string $name, ?int $type): Login
     {
         try {
+            if (!$password || !$email || !$name || !$type) throw new BadRequestHttpException();
+
             $login = new Login();
             $login->setEmail($email);
 
