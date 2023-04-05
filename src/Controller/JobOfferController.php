@@ -35,7 +35,9 @@ class JobOfferController extends AbstractController
                 $jobsArray[] = $job->toArray();
         }
 
-        return new JsonResponse($jobsArray, Response::HTTP_OK, [], false);;
+        if(empty($jobsArray)) return JsonResponse($jobsArray, Response::HTTP_NO_CONTENT, [], false);
+
+        return new JsonResponse($jobsArray, Response::HTTP_OK, [], false);
     }
 
     #[Route('/api/job-offer/{id}/like', name: 'like_job_offer', methods: ['POST'])]
