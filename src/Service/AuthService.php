@@ -31,7 +31,11 @@ class AuthService
 
     public function login(LoginDTO $loginDTO): AccessToken
     {
-        $loginUser = $this->userProvider->loadUserByIdentifier($loginDTO->getEmail());
+        try {
+            $loginUser = $this->userProvider->loadUserByIdentifier($loginDTO->getEmail() ?? "");
+        } catch (\RuntimeException $e) {
+            throw new BadRequestHttpException($e->getMessage());
+        }
 
         if (!$this->passwordHasher->isPasswordValid($loginUser, $loginDTO->getPassword())) {
             throw new BadRequestHttpException();
@@ -110,11 +114,11 @@ class AuthService
         $adminRepo = $manager->getRepository(AdminCreationInvite::class);
 
         /** @var AdminCreationInvite $invite */
-        $invite = $adminRepo->findOneBy(['token' =>$token]);
+        $invite = $adminRepo->findOneBy(['token' => $token]);
 
-        if(!$invite)
+        if (!$invite)
             throw new UnauthorizedHttpException('token');
-        if($invite->isExpired())
+        if ($invite->isExpired())
             throw new UnauthorizedHttpException('token');
 
         $this->createAdminLogin($loginDTO, $type, $admin);
