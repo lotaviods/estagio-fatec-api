@@ -38,7 +38,7 @@ class StudentController extends AbstractController
         $studentLogin = $this->getUser();
 
         if ($student->getLogin()->getId() !== $studentLogin->getId())
-            return new JsonResponse([], 401);
+            return new JsonResponse([], 403);
 
         $entityManager = $doctrine->getManager();
 
@@ -66,7 +66,7 @@ class StudentController extends AbstractController
         /** @var JobOffer $job */
         $job = $jobRepository->find($jobId);
 
-        if ($job == null) return new JsonResponse(array('error' => "job offer must exist"));
+        if ($job == null) return new JsonResponse(status: 400, data: array('error' => "job offer must exist"));
         if (!$job->isActive()) return new JsonResponse(array('error' => "job offer must be active"));
 
         /** @var Student $student */
@@ -96,7 +96,7 @@ class StudentController extends AbstractController
 
         $job = $jobRepository->find($jobId);
 
-        if ($job == null) return new JsonResponse(array('error' => "job offer must exist"));
+        if ($job == null) return new JsonResponse(status: 400, data: array('error' => "job offer must exist"));
 
         /** @var Student $student */
         $student = $repository->find($studentId);
