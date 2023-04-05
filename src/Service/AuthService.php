@@ -11,9 +11,9 @@ use App\Entity\Login;
 use App\Entity\Student;
 use App\Repository\AdministratorRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
-use Symfony\Component\Security\Core\Exception\BadCredentialsException;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 
 class AuthService
@@ -34,7 +34,7 @@ class AuthService
         $loginUser = $this->userProvider->loadUserByIdentifier($loginDTO->getEmail());
 
         if (!$this->passwordHasher->isPasswordValid($loginUser, $loginDTO->getPassword())) {
-            throw new BadCredentialsException();
+            throw new BadRequestHttpException();
         }
 
         return $this->createTokenByUser($loginUser);
