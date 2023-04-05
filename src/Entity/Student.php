@@ -106,7 +106,7 @@ class Student
 
         return [
             "ra" => $this->ra,
-            "email" => $this->email,
+            "email" => $this->login->getEmail() ?? "",
             "applied_jobs" => $jobArray
         ];
     }

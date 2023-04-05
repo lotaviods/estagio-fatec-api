@@ -19,7 +19,7 @@ use App\Helper\ResponseHelper;
 
 class StudentController extends AbstractController
 {
-    #[Route('/api/student/detail', name: 'student-detail')]
+    #[Route('/api/student/{student_id}/detail', name: 'student-detail')]
     public function getStudentDetail(ManagerRegistry $doctrine, Request $request): Response
     {
         $studentId = $request->get("student_id");
