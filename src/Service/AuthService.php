@@ -80,7 +80,7 @@ class AuthService
         return $login;
     }
 
-    public function registerStudent(Student $student, LoginDTO $dto, int $type = LoginType::STUDENT): AccessToken
+    public function registerStudent(Student $student, LoginDTO $dto, int $type = LoginType::STUDENT): void
     {
         //TODO Add more types of register not only student
 
@@ -98,8 +98,6 @@ class AuthService
         $entityManager->persist($student);
         $entityManager->persist($login);
         $entityManager->flush();
-
-        return $this->createTokenByUser($login);
     }
 
     public function registerInvitedAdmin(string $token, LoginDTO $loginDTO, Administrator $admin): void

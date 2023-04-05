@@ -31,9 +31,8 @@ class LoginController extends AbstractController
     public function studentRegister(Request $request, AuthService $service): JsonResponse
     {
         //TODO make link student to class
-        $accessToken = $service->registerStudent(StudentMapper::fromRequest($request), LoginDTO::fromRequest($request));
-
-        return $this->json(['message' => 'User created successfully', 'token' => ['access_token' => $accessToken->getAccessToken(), 'expires_at' => $accessToken->getExpiresAt()->format(DateTimeInterface::ATOM)]], Response::HTTP_CREATED);
+        $service->registerStudent(StudentMapper::fromRequest($request), LoginDTO::fromRequest($request));
+        return $this->json([], Response::HTTP_CREATED);
     }
 
     #[Route('api/register/admin/invitation', name: 'adminInvitationRegister', methods: ['POST'])]
