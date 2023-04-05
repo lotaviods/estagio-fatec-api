@@ -32,7 +32,8 @@ class LoginController extends AbstractController
     #[Route('api/register/student', name: 'studentRegister', methods: ['POST'])]
     public function studentRegister(Request $request, AuthService $service): JsonResponse
     {
-        //TODO make link student to class
+        $this->denyAccessUnlessGranted('ROLE_ADM');
+
         $service->registerStudent(StudentMapper::fromRequest($request), LoginDTO::fromRequest($request));
         return $this->json([], Response::HTTP_CREATED);
     }
