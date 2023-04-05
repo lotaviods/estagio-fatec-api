@@ -91,10 +91,12 @@ class AuthService
             $type,
         );
 
+        $login->setRoles(["ROLE_STUDENT"]);
         $student->setLogin($login);
 
         $entityManager = $this->doctrine->getManager();
         $entityManager->persist($student);
+        $entityManager->persist($login);
         $entityManager->flush();
 
         return $this->createTokenByUser($login);
@@ -123,11 +125,12 @@ class AuthService
             $loginDTO->getName(),
             $type,
         );
-
+        $login->setRoles(["ROLE_ADMIN"]);
         $admin->setLogin($login);
 
         $entityManager = $this->doctrine->getManager();
         $entityManager->persist($admin);
+        $entityManager->persist($login);
         $entityManager->flush();
 
         return $this->createTokenByUser($login);
