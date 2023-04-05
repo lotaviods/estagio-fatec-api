@@ -37,7 +37,7 @@ class AuthService
             throw new BadRequestHttpException($e->getMessage());
         }
 
-        if (!$this->passwordHasher->isPasswordValid($loginUser, $loginDTO->getPassword())) {
+        if (!$this->passwordHasher->isPasswordValid($loginUser, $loginDTO->getPassword() ?? "")) {
             throw new BadRequestHttpException();
         }
 
