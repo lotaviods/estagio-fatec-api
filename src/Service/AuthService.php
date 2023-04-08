@@ -53,12 +53,12 @@ class AuthService
         return ["token" => $token->toArray(), "data" => $userInfo];
     }
 
-    private function getUserInformation(Login $user): array
+    private function getUserInformation(Login $user): array|stdClass
     {
         if ($user->getType() == LoginType::STUDENT) {
             return $this->getStudentInformation($user);
         }
-        return [];
+        return new stdClass();
     }
 
     private function createTokenByUser(Login $user): AccessToken
@@ -198,7 +198,7 @@ class AuthService
     {
         $student = $this->studentService->getStudentByLogin($user);
 
-        if (!$student) return [];
+        if (!$student) [];
 
         $course = $student->getCollageClass()?->getSemester()->getCourse();
 
