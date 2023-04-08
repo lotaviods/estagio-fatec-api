@@ -12,9 +12,11 @@ use App\Entity\Login;
 use App\Entity\Student;
 use App\Repository\AdministratorRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use stdClass;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 
 class AuthService
@@ -23,14 +25,17 @@ class AuthService
     private UserPasswordHasherInterface $passwordHasher;
     private UserProviderInterface $userProvider;
 
-    public function __construct(ManagerRegistry $doctrine, UserPasswordHasherInterface $passwordHasher, UserProviderInterface $userProvider)
+    private StudentService $studentService;
+
+    public function __construct(ManagerRegistry $doctrine, UserPasswordHasherInterface $passwordHasher, UserProviderInterface $userProvider, StudentService $studentService)
     {
         $this->doctrine = $doctrine;
         $this->passwordHasher = $passwordHasher;
         $this->userProvider = $userProvider;
+        $this->studentService = $studentService;
     }
 
-    public function login(LoginDTO $loginDTO): AccessToken
+    public function login(LoginDTO $loginDTO): array
     {
         try {
             $loginUser = $this->userProvider->loadUserByIdentifier($loginDTO->getEmail() ?? "");
@@ -42,7 +47,18 @@ class AuthService
             throw new BadRequestHttpException();
         }
 
-        return $this->createTokenByUser($loginUser);
+        $userInfo = $this->getUserInformation($loginUser);
+        $token = $this->createTokenByUser($loginUser);
+
+        return ["token" => $token->toArray(), "data" => $userInfo];
+    }
+
+    private function getUserInformation(Login $user): array
+    {
+        if ($user->getType() == LoginType::STUDENT) {
+            return $this->getStudentInformation($user);
+        }
+        return [];
     }
 
     private function createTokenByUser(Login $user): AccessToken
@@ -176,5 +192,21 @@ class AuthService
         $entityManager->persist($company);
         $entityManager->flush();
 
+    }
+
+    private function getStudentInformation(Login $user): array
+    {
+        $student = $this->studentService->getStudentByLogin($user);
+
+        if (!$student) return [];
+
+        $course = $student->getCollageClass()?->getSemester()->getCourse();
+
+        return [
+            "id" => $student->getId(),
+            "name" => $student->getName(),
+            "course" => $course?->toArray() ?? new stdClass(),
+            "ra" => $student->getRa()
+        ];
     }
 }

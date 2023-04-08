@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\AccessTokenRepository;
 use DateTime;
+use DateTimeInterface;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -88,5 +89,10 @@ class AccessToken
     public function getUserId(): string
     {
         return $this->getUser()?->getEmail();
+    }
+
+    public function toArray(): array
+    {
+        return ['access_token' => $this->getAccessToken(), "expires_at" => $this->getExpiresAt()->format(DateTimeInterface::ATOM)];
     }
 }

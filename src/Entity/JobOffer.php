@@ -32,16 +32,16 @@ class JobOffer
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $promotionalImageUrl = null;
 
-    #[ORM\ManyToOne(inversedBy: 'job_offer')]
+    #[ORM\ManyToOne(cascade: ['persist'], inversedBy: 'job_offer')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Company $company = null;
 
     #[ORM\JoinColumn(nullable: true)]
-    #[ORM\ManyToMany(targetEntity: Student::class, mappedBy: "appliedJobs")]
+    #[ORM\ManyToMany(targetEntity: Student::class, mappedBy: "appliedJobs", cascade: ['persist'])]
     private Collection $subscribedStudents;
 
     #[ORM\JoinColumn(nullable: true)]
-    #[ORM\ManyToMany(targetEntity: Student::class, mappedBy: "likedJobs")]
+    #[ORM\ManyToMany(targetEntity: Student::class, mappedBy: "likedJobs", cascade: ['persist'])]
     private Collection $studentLikes;
 
     #[ORM\Column(length: 255, nullable: true)]

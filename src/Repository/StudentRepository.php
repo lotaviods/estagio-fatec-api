@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Login;
 use App\Entity\Student;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -63,4 +64,8 @@ class StudentRepository extends ServiceEntityRepository
 //            ->getOneOrNullResult()
 //        ;
 //    }
+    public function findByLogin(Login $user): Student
+    {
+        return $this->findOneBy(['login' => "{$user->getId()}"]);
+    }
 }

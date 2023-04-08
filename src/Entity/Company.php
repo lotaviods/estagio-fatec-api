@@ -15,7 +15,7 @@ class Company
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\OneToMany(mappedBy: 'company', targetEntity: JobOffer::class, orphanRemoval: true)]
+    #[ORM\OneToMany(mappedBy: 'company', targetEntity: JobOffer::class, cascade: ['persist'], orphanRemoval: true)]
     private Collection $job_offer;
 
     #[ORM\Column(length: 255, nullable: true)]
