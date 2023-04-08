@@ -198,7 +198,7 @@ class AuthService
     {
         $student = $this->studentService->getStudentByLogin($user);
 
-        if (!$student) [];
+        if (!$student) return [];
 
         $course = $student->getCollageClass()?->getSemester()->getCourse();
 
