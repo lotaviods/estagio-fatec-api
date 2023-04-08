@@ -75,7 +75,7 @@ class StudentController extends AbstractController
 
         $repository->save($student, true);
 
-        return new JsonResponse($student->toArray(), Response::HTTP_OK, [], false);;
+        return new JsonResponse([], Response::HTTP_OK, [], false);;
     }
 
     #[Route('/api/student/job-offer/unsubscribe', name: 'unsubscribe-job-offer', methods: ['POST'])]
@@ -104,6 +104,6 @@ class StudentController extends AbstractController
 
         $repository->save($student, true);
 
-        return new JsonResponse($student->toArray(), Response::HTTP_OK, [], false);;
+        return new JsonResponse([], Response::HTTP_OK, [], false);;
     }
 }
