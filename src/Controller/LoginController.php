@@ -45,10 +45,10 @@ class LoginController extends AbstractController
         return $this->json([], Response::HTTP_CREATED);
     }
 
-    #[Route('api/register/admin/invitation', name: 'adminInvitationRegister', methods: ['POST'])]
-    public function adminInvitedRegister(Request $request, AuthService $service): JsonResponse
+    #[Route('api/register/master', name: 'adminMasterRegister', methods: ['POST'])]
+    public function adminMasterRegister(Request $request, AuthService $service): JsonResponse
     {
-        $service->registerInvitedAdmin(token: $request->get("invite_token"), loginDTO: LoginDTO::fromRequest($request), admin: AdminMapper::fromRequest($request));
+        $service->registerAdminMaster(token: $request->get("invite_token"), loginDTO: LoginDTO::fromRequest($request), admin: AdminMapper::fromRequest($request));
 
         return $this->json([], Response::HTTP_CREATED);
     }

@@ -2,14 +2,14 @@
 
 namespace App\Entity;
 
-use App\Repository\AdminCreationInviteRepository;
+use App\Repository\MasterAdminCreationInviteRepository;
 use DateTime;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\HttpFoundation\Request;
 
-#[ORM\Entity(repositoryClass: AdminCreationInviteRepository::class)]
-class AdminCreationInvite
+#[ORM\Entity(repositoryClass: MasterAdminCreationInviteRepository::class)]
+class MasterAdminCreationInvite
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]

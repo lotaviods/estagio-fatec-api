@@ -6,7 +6,7 @@ use App\Constants\LoginType;
 use App\DTO\LoginDTO;
 use App\Entity\AccessToken;
 use App\Entity\Administrator;
-use App\Entity\AdminCreationInvite;
+use App\Entity\MasterAdminCreationInvite;
 use App\Entity\Company;
 use App\Entity\Login;
 use App\Entity\Student;
@@ -55,8 +55,10 @@ class AuthService
 
     private function getUserInformation(Login $user): array|stdClass
     {
+        $data = ["tipo_login" => $user->getType()];
+
         if ($user->getType() == LoginType::STUDENT) {
-            return $this->getStudentInformation($user);
+            return array_merge($data, $this->getStudentInformation($user));
         }
         return new stdClass();
     }
@@ -127,16 +129,16 @@ class AuthService
         $entityManager->flush();
     }
 
-    public function registerInvitedAdmin(string $token, LoginDTO $loginDTO, Administrator $admin): void
+    public function registerAdminMaster(string $token, LoginDTO $loginDTO, Administrator $admin): void
     {
-        $type = LoginType::ADMIN;
+        $type = LoginType::ADMIN_MASTER;
 
         $manager = $this->doctrine->getManager();
 
         /** @var AdministratorRepository $adminRepo */
-        $adminRepo = $manager->getRepository(AdminCreationInvite::class);
+        $adminRepo = $manager->getRepository(MasterAdminCreationInvite::class);
 
-        /** @var AdminCreationInvite $invite */
+        /** @var MasterAdminCreationInvite $invite */
         $invite = $adminRepo->findOneBy(['token' => $token]);
 
         if (!$invite)
@@ -145,6 +147,13 @@ class AuthService
             throw new UnauthorizedHttpException('token');
 
         $this->createAdminLogin($loginDTO, $type, $admin);
+
+        $login = $admin->getLogin();
+        $login->addRoles(["ROLE_MASTER"]);
+
+        $entityManager = $this->doctrine->getManager();
+        $entityManager->persist($login);
+        $entityManager->flush();
     }
 
     public function registerAdmin(LoginDTO $loginDTO, Administrator $admin): void

@@ -2,26 +2,26 @@
 
 namespace App\Repository;
 
-use App\Entity\AdminCreationInvite;
+use App\Entity\MasterAdminCreationInvite;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * @extends ServiceEntityRepository<AdminCreationInvite>
  *
- * @method AdminCreationInvite|null find($id, $lockMode = null, $lockVersion = null)
- * @method AdminCreationInvite|null findOneBy(array $criteria, array $orderBy = null)
- * @method AdminCreationInvite[]    findAll()
- * @method AdminCreationInvite[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method MasterAdminCreationInvite|null find($id, $lockMode = null, $lockVersion = null)
+ * @method MasterAdminCreationInvite|null findOneBy(array $criteria, array $orderBy = null)
+ * @method MasterAdminCreationInvite[]    findAll()
+ * @method MasterAdminCreationInvite[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class AdminCreationInviteRepository extends ServiceEntityRepository
+class MasterAdminCreationInviteRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, AdminCreationInvite::class);
+        parent::__construct($registry, MasterAdminCreationInvite::class);
     }
 
-    public function save(AdminCreationInvite $entity, bool $flush = false): void
+    public function save(MasterAdminCreationInvite $entity, bool $flush = false): void
     {
         $this->getEntityManager()->persist($entity);
 
@@ -30,7 +30,7 @@ class AdminCreationInviteRepository extends ServiceEntityRepository
         }
     }
 
-    public function remove(AdminCreationInvite $entity, bool $flush = false): void
+    public function remove(MasterAdminCreationInvite $entity, bool $flush = false): void
     {
         $this->getEntityManager()->remove($entity);
 

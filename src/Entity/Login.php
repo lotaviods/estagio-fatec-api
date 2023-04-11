@@ -54,7 +54,7 @@ class Login implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getUserIdentifier(): string
     {
-        return (string) $this->email;
+        return (string)$this->email;
     }
 
     /**
@@ -73,6 +73,12 @@ class Login implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $this->roles = $roles;
 
+        return $this;
+    }
+
+    public function addRoles(array $roles): self
+    {
+        $this->roles = array_merge($this->roles, $roles);
         return $this;
     }
 
