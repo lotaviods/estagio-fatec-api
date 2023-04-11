@@ -149,7 +149,15 @@ class JobOffer
             $studentLikeIdArray[] = $student->getId();
         }
 
+        $studentSubscribedIdArray = [];
+
+        foreach ($this->subscribedStudents as $student) {
+            $studentSubscribedIdArray[] = $student->getId();
+        }
+
         $newArray += ["liked_by" => $studentLikeIdArray];
+
+        $newArray += ["subscribed_by" => $studentSubscribedIdArray];
 
         return $newArray;
     }
