@@ -63,7 +63,7 @@ class LoginController extends AbstractController
         return $this->json([], Response::HTTP_CREATED);
     }
 
-    #[Route('api/register/company', name: 'adminRegister', methods: ['POST'])]
+    #[Route('api/register/company', name: 'companyRegister', methods: ['POST'])]
     public function companyRegister(Request $request, AuthService $service): JsonResponse
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
