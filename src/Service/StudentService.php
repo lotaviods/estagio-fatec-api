@@ -36,4 +36,15 @@ class StudentService
         return $student;
     }
 
+    public function getStudentInformation(Student $student): array {
+        $course = $student->getCollageClass()?->getSemester()->getCourse();
+
+        return [
+            "id" => $student->getId(),
+            "name" => $student->getName(),
+            "course" => $course?->toArray() ?? new stdClass(),
+            "ra" => $student->getRa()
+        ];
+    }
+
 }

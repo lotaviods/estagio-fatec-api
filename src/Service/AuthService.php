@@ -16,7 +16,6 @@ use stdClass;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
-use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 
 class AuthService
@@ -27,12 +26,23 @@ class AuthService
 
     private StudentService $studentService;
 
-    public function __construct(ManagerRegistry $doctrine, UserPasswordHasherInterface $passwordHasher, UserProviderInterface $userProvider, StudentService $studentService)
+    private AdminService $adminService;
+
+    private CompanyService $companyService;
+
+    public function __construct(ManagerRegistry             $doctrine,
+                                UserPasswordHasherInterface $passwordHasher,
+                                UserProviderInterface       $userProvider,
+                                StudentService              $studentService,
+                                AdminService                $adminService,
+                                CompanyService $companyService)
     {
         $this->doctrine = $doctrine;
         $this->passwordHasher = $passwordHasher;
         $this->userProvider = $userProvider;
         $this->studentService = $studentService;
+        $this->adminService = $adminService;
+        $this->companyService = $companyService;
     }
 
     public function login(LoginDTO $loginDTO): array
@@ -55,10 +65,20 @@ class AuthService
 
     private function getUserInformation(Login $user): array|stdClass
     {
-        $data = ["tipo_login" => $user->getType()];
+        $data = [
+            "login_type" => $user->getType()
+        ];
 
         if ($user->getType() == LoginType::STUDENT) {
-            return array_merge($data, $this->getStudentInformation($user));
+            return array_merge($data, $this->getStudentLoginInformation($user));
+        }
+
+        if ($user->getType() == LoginType::ADMIN || $user->getType() == LoginType::ADMIN_MASTER) {
+            return array_merge($data, $this->getAdminLoginInformation($user));
+        }
+
+        if ($user->getType() == LoginType::COMPANY) {
+            return array_merge($data, $this->getCompanyInformation($user));
         }
         return new stdClass();
     }
@@ -203,19 +223,31 @@ class AuthService
 
     }
 
-    private function getStudentInformation(Login $user): array
+    private function getStudentLoginInformation(Login $user): array
     {
         $student = $this->studentService->getStudentByLogin($user);
 
-        if (!$student) return [];
+        if (!$student)
+            return [];
 
-        $course = $student->getCollageClass()?->getSemester()->getCourse();
+        return $this->studentService->getStudentInformation($student);
+    }
 
-        return [
-            "id" => $student->getId(),
-            "name" => $student->getName(),
-            "course" => $course?->toArray() ?? new stdClass(),
-            "ra" => $student->getRa()
-        ];
+    private function getAdminLoginInformation(Login $user): array
+    {
+        $admin = $this->adminService->getAdminByLogin($user);
+
+        if (!$admin) return [];
+
+        return $this->adminService->getAdminInformation($admin);
+    }
+
+    private function getCompanyInformation(Login $user): array
+    {
+        $company = $this->companyService->getCompanyByLogin($user);
+
+        if(!$company) return [];
+
+        return $this->companyService->getCompanyInformation($company);
     }
 }

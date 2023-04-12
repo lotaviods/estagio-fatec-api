@@ -3,6 +3,8 @@
 namespace App\Repository;
 
 use App\Entity\Administrator;
+use App\Entity\Login;
+use App\Entity\Student;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -37,6 +39,11 @@ class AdministratorRepository extends ServiceEntityRepository
         if ($flush) {
             $this->getEntityManager()->flush();
         }
+    }
+
+    public function findByLogin(Login $user): Administrator
+    {
+        return $this->findOneBy(['login' => "{$user->getId()}"]);
     }
 
 //    /**

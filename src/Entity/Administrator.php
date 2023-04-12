@@ -33,4 +33,9 @@ class Administrator
 
         return $this;
     }
+
+    public function getName(): ?string
+    {
+        return $this->getLogin()?->getName() ?? "";
+    }
 }

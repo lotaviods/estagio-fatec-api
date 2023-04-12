@@ -64,8 +64,6 @@ class Login implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $roles = $this->roles;
 
-        $roles[] = 'ROLE_COMPANY';
-
         return array_unique($roles);
     }
 
