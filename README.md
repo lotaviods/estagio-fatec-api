@@ -10,6 +10,7 @@
 - [FATEC Internship Management API](#fatec-internship-management-api)
     - [Description](#description)
     - [Prerequisites](#prerequisites)
+    - [Infrastructure](#infrastructure)
     - [Setup](#setup)
     - [License](#license)
 
@@ -24,6 +25,38 @@ This guide will walk you through setting up a Symfony project with Docker for de
 ## Prerequisites
 
     Docker and Docker Compose installed on your machine.
+    
+    A clone of the infrastructure repository located at https://github.com/lotaviods/link-fatec-infra
+
+## Infrastructure
+
+Before building and running this project, you will need to clone and build the necessary Docker containers located at [link-fatec-infra](https://github.com/lotaviods/link-fatec-infra).
+
+Follow the steps below to clone and build the containers:
+
+1. Clone the `link-fatec-infra` repository:
+
+    ```bash
+    git clone git@github.com:lotaviods/link-fatec-infra.git
+    ```
+
+2. Navigate into the cloned repository:
+
+    ```bash
+    cd link-fatec-infra
+    ```
+
+3. Build the Docker containers:
+
+    ```bash
+    docker-compose up --build -d
+    ```
+
+   The `-d` option starts the containers in detached mode, allowing you to continue using your terminal.
+
+Once the infrastructure containers are running, you can proceed with the setup of this project.
+
+
 
 ## Setup
 
