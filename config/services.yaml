@@ -22,5 +22,12 @@ services:
             - '../src/Entity/'
             - '../src/Kernel.php'
 
+    App\Service\MinioService:
+        class: App\Service\MinioService
+        arguments:
+            $endpoint: '%env(LINK_FATEC_MINIO_ENDPOINT)%'
+            $accessKey: '%env(LINK_FATEC_MINIO_ACCESS_KEY)%'
+            $secretKey: '%env(LINK_FATEC_MINIO_SECRET_KEY)%'
+
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

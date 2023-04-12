@@ -36,3 +36,7 @@ DATABASE_URL="mysql://root:secret@fatec-db:3306/fatec-link-api?serverVersion=5.7
 ###< symfony/mailer ###
 
 LINK_FATEC_PORT="8080"
+LINK_FATEC_DB_PORT="3306"
+LINK_FATEC_MINIO_ENDPOINT="http://estagio-fatec-minio:9000"
+LINK_FATEC_MINIO_ACCESS_KEY=""
+LINK_FATEC_MINIO_SECRET_KEY=""
