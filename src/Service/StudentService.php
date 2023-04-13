@@ -7,6 +7,7 @@ use App\Entity\Login;
 use App\Entity\Student;
 use App\Repository\StudentRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use stdClass;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 
