@@ -19,7 +19,7 @@ use App\Helper\ResponseHelper;
 
 class StudentController extends AbstractController
 {
-    #[Route('/api/student/{student_id}/detail', name: 'student-detail')]
+    #[Route('/api/v1/student/{student_id}/detail', name: 'student-detail_v1')]
     public function getStudentDetail(ManagerRegistry $doctrine, Request $request): Response
     {
         $studentId = $request->get("student_id");
@@ -47,7 +47,7 @@ class StudentController extends AbstractController
     }
 
 
-    #[Route('/api/student/job-offer/subscribe', name: 'subscribe-job-offer', methods: ['POST'])]
+    #[Route('/api/v1/student/job-offer/subscribe', name: 'subscribe-job-offer_v1', methods: ['POST'])]
     public function subscribeToJobOffer(ManagerRegistry $doctrine, Request $request): Response
     {
         $entityManager = $doctrine->getManager();
@@ -78,7 +78,7 @@ class StudentController extends AbstractController
         return new JsonResponse([], Response::HTTP_OK, [], false);;
     }
 
-    #[Route('/api/student/job-offer/unsubscribe', name: 'unsubscribe-job-offer', methods: ['POST'])]
+    #[Route('/api/v1/student/job-offer/unsubscribe', name: 'unsubscribe-job-offer_v1', methods: ['POST'])]
     public function unsubscribeToJobOffer(ManagerRegistry $doctrine, Request $request): Response
     {
         $entityManager = $doctrine->getManager();

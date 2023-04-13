@@ -22,7 +22,7 @@ use Symfony\Component\Serializer\Encoder\JsonEncoder;
 class JobOfferController extends AbstractController
 {
 
-    #[Route('/api/job-offers/available', name: 'jobs_available')]
+    #[Route('/api/v1/job-offers/available', name: 'jobs_available_v1')]
     public function getAllAvailableJobs(ManagerRegistry $doctrine): Response
     {
         $entityManager = $doctrine->getManager();
@@ -40,7 +40,7 @@ class JobOfferController extends AbstractController
         return new JsonResponse($jobsArray, Response::HTTP_OK, [], false);
     }
 
-    #[Route('/api/job-offer/{id}/like', name: 'like_job_offer', methods: ['POST'])]
+    #[Route('/api/v1/job-offer/{id}/like', name: 'like_job_offer_v1', methods: ['POST'])]
     public function likeJobOffer(ManagerRegistry $doctrine, Request $request): Response
     {
         $jobOfferId = $request->get("id");
@@ -68,7 +68,7 @@ class JobOfferController extends AbstractController
         return new JsonResponse([], Response::HTTP_OK, [], false);
     }
 
-    #[Route('/api/job-offer', name: 'create_job_offer', methods: ['POST'])]
+    #[Route('/api/v1/job-offer', name: 'create_job_offer_v1', methods: ['POST'])]
     public function createJobOffer(ManagerRegistry $doctrine, Request $request): Response
     {
         $companyId = $request->get("company_id");
@@ -119,7 +119,7 @@ class JobOfferController extends AbstractController
         return new JsonResponse($job->toArray(), Response::HTTP_OK, [], false);;
     }
 
-    #[Route('/api/job-offers', name: 'job-offers')]
+    #[Route('/api/v1/job-offers', name: 'job-offers_v1')]
     public function getAllJobs(ManagerRegistry $doctrine): Response
     {
         $entityManager = $doctrine->getManager();
@@ -134,7 +134,7 @@ class JobOfferController extends AbstractController
         return new JsonResponse($jobsArray, Response::HTTP_OK, [], false);;
     }
 
-    #[Route('/api/job-offers/available/course/{course_id}', name: 'available-job-offers-course')]
+    #[Route('/api/v1/job-offers/available/course/{course_id}', name: 'available-job-offers-course_v1')]
     public function getAvailableJobsFromCourse(ManagerRegistry $doctrine, Request $request): Response
     {
         $couseId = $request->get("course_id");

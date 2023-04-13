@@ -14,7 +14,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class StudentProfileController extends AbstractController
 {
-    #[Route('/api/mobile/student/resume', name: 'save_resume', methods: ['POST'])]
+    #[Route('/api/v1/mobile/student/resume', name: 'save_resume_v1', methods: ['POST'])]
     public function saveResume(Request        $request,
                                MinioService   $minioService,
                                StudentService $studentService
@@ -32,7 +32,7 @@ class StudentProfileController extends AbstractController
         return $this->json([]);
     }
 
-    #[Route('/api/mobile/student/profile_picture', name: 'save_profile_picture', methods: ['POST'])]
+    #[Route('/api/v1/mobile/student/profile_picture', name: 'save_profile_picture', methods: ['POST'])]
     public function saveProfilePicture(Request        $request,
                                MinioService   $minioService,
                                StudentService $studentService
