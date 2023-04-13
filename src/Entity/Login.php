@@ -30,6 +30,9 @@ class Login implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $profilePicture = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -126,5 +129,21 @@ class Login implements UserInterface, PasswordAuthenticatedUserInterface
         $this->name = $name;
 
         return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getProfilePicture(): ?string
+    {
+        return $this->profilePicture;
+    }
+
+    /**
+     * @param string|null $profilePicture
+     */
+    public function setProfilePicture(?string $profilePicture): void
+    {
+        $this->profilePicture = $profilePicture;
     }
 }

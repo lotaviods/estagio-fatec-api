@@ -155,4 +155,9 @@ class Student
 
         return $this;
     }
+
+    public function setProfilePicture(?string $profilePicture): void
+    {
+        $this->login->setProfilePicture($profilePicture);
+    }
 }

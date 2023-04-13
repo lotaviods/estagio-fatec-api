@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use Aws\S3\S3Client;
+use GuzzleHttp\Psr7\Uri;
 
 class MinioService
 {
@@ -36,5 +37,10 @@ class MinioService
         $url = $this->client->getObjectUrl($bucketName, $fileName);
 
         return str_replace($this->client->getEndpoint(), '', $url);
+    }
+
+    public function getEndpoint(): Uri|string
+    {
+        return $this->client->getEndpoint();
     }
 }

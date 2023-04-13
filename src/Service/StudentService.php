@@ -72,4 +72,15 @@ class StudentService
         ];
     }
 
+    public function setStudentProfilePicture(string $uri, mixed $studentId): void
+    {
+        $student = $this->repository->findOneBy(["id" => $studentId]);
+
+        $student->setProfilePicture($uri);
+
+        $this->manager->persist($student);
+
+        $this->manager->flush();
+    }
+
 }

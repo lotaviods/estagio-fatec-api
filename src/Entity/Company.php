@@ -18,8 +18,6 @@ class Company
     #[ORM\OneToMany(mappedBy: 'company', targetEntity: JobOffer::class, cascade: ['persist'], orphanRemoval: true)]
     private Collection $job_offer;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $profilePicture = null;
     #[ORM\Column]
     private ?bool $active = null;
 
@@ -84,7 +82,7 @@ class Company
      */
     public function getProfilePicture(): ?string
     {
-        return $this->profilePicture;
+        return $this->login?->getProfilePicture();
     }
 
     /**
@@ -92,7 +90,7 @@ class Company
      */
     public function setProfilePicture(?string $profilePicture): void
     {
-        $this->profilePicture = $profilePicture;
+        $this->login?->setProfilePicture($profilePicture);
     }
 
     public function getLogin(): ?login

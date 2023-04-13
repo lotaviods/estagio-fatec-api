@@ -10,6 +10,7 @@ use App\Entity\MasterAdminCreationInvite;
 use App\Entity\Company;
 use App\Entity\Login;
 use App\Entity\Student;
+use App\Helper\ProfilePictureHelper;
 use App\Repository\AdministratorRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use stdClass;
@@ -30,12 +31,16 @@ class AuthService
 
     private CompanyService $companyService;
 
+    private ProfilePictureHelper $profilePictureHelper;
+
     public function __construct(ManagerRegistry             $doctrine,
                                 UserPasswordHasherInterface $passwordHasher,
                                 UserProviderInterface       $userProvider,
                                 StudentService              $studentService,
                                 AdminService                $adminService,
-                                CompanyService $companyService)
+                                CompanyService              $companyService,
+                                ProfilePictureHelper        $profilePictureHelper
+    )
     {
         $this->doctrine = $doctrine;
         $this->passwordHasher = $passwordHasher;
@@ -43,6 +48,7 @@ class AuthService
         $this->studentService = $studentService;
         $this->adminService = $adminService;
         $this->companyService = $companyService;
+        $this->profilePictureHelper =$profilePictureHelper;
     }
 
     public function login(LoginDTO $loginDTO): array
@@ -66,7 +72,8 @@ class AuthService
     private function getUserInformation(Login $user): array|stdClass
     {
         $data = [
-            "login_type" => $user->getType()
+            "login_type" => $user->getType(),
+            "profile_picture" => $this->profilePictureHelper->getFullProfileUrl($user->getProfilePicture())
         ];
 
         if ($user->getType() == LoginType::STUDENT) {
@@ -246,7 +253,7 @@ class AuthService
     {
         $company = $this->companyService->getCompanyByLogin($user);
 
-        if(!$company) return [];
+        if (!$company) return [];
 
         return $this->companyService->getCompanyInformation($company);
     }
