@@ -13,8 +13,9 @@ class ProfilePictureHelper
         $this->minioService = $minioService;
     }
 
-    public function getFullProfileUrl(string $profileUri)
+    public function getFullProfileUrl(?string $profileUri): ?string
     {
+        if(!$profileUri) return null;
         return "{$this->minioService->getEndpoint()}$profileUri";
     }
 }
