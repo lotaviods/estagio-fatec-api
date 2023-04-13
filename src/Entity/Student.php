@@ -37,6 +37,9 @@ class Student
     #[ORM\ManyToOne(inversedBy: 'students')]
     private ?CollageClass $collageClass = null;
 
+    #[ORM\OneToOne(mappedBy: 'student')]
+    private ?StudentResume $resume = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -139,5 +142,17 @@ class Student
     public function getName(): ?string
     {
         return $this->login->getName();
+    }
+
+    public function getResume(): ?StudentResume
+    {
+        return $this->resume;
+    }
+
+    public function setResume(StudentResume $resume): self
+    {
+        $this->resume = $resume;
+
+        return $this;
     }
 }

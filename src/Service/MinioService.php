@@ -24,12 +24,17 @@ class MinioService
 
     }
 
-    public function upload(mixed $file, string $fileName, string $bucketName): void
+    public function upload(mixed $file, string $fileName, string $bucketName): string
     {
         $this->client->putObject([
             'Bucket' => $bucketName,
             'Key' => $fileName,
             'Body' => fopen($file, 'r'),
+            'ACL' => 'public-read',
         ]);
+
+        $url = $this->client->getObjectUrl($bucketName, $fileName);
+
+        return str_replace($this->client->getEndpoint(), '', $url);
     }
 }
