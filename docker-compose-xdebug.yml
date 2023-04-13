@@ -1,0 +1,29 @@
+version: '3.5'
+
+services:
+  estagio-fatec-api-xdebug:
+    container_name: "estagio-fatec-api-xdebug"
+    image: link-fatec-api
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile
+      args:
+        XDEBUG_ENABLED: 'true'
+    env_file:
+      - .env
+    ports:
+      - "${LINK_FATEC_PORT}:80"
+      - "${LINK_FATEC_XDEBUG_PORT}:9000"
+    volumes:
+      - .:/var/www/html
+    networks:
+      - infra-estagio-network
+    labels:
+      - "traefik.http.routers.estagio-fatec-api.rule=Host(`fatec.estagio.com`)"
+      - "traefik.http.routers.estagio-fatec-api.entrypoints=default"
+      - "traefik.docker.network=infra-estagio-network"
+      - "traefik.enable=true"
+
+networks:
+  infra-estagio-network:
+    external: true
