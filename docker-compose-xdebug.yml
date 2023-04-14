@@ -9,6 +9,7 @@ services:
       dockerfile: ./docker/Dockerfile
       args:
         XDEBUG_ENABLED: 'true'
+        LINK_FATEC_XDEBUG_PORT: ${LINK_FATEC_XDEBUG_PORT}
     env_file:
       - .env
     ports:

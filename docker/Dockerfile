@@ -28,13 +28,13 @@ RUN a2enmod rewrite \
 
 # Configure Xdebug
 ARG XDEBUG_ENABLED=false
-ARG XDEBUG_PORT=9000
+ARG LINK_FATEC_XDEBUG_PORT=9000
 RUN if [ "$XDEBUG_ENABLED" = "true" ]; then \
     echo "xdebug.mode=debug" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
     && echo "xdebug.client_host=host.docker.internal" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
     && echo "xdebug.start_with_request=yes" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
     && echo "xdebug.log_level=0" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
     && echo "xdebug.discover_client_host=true" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
-    && echo "xdebug.client_port=${XDEBUG_PORT}" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini; \
+    && echo "xdebug.remote_port=${LINK_FATEC_XDEBUG_PORT}" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini; \
     fi
 
