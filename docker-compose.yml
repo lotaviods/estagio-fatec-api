@@ -16,7 +16,7 @@ services:
     networks:
       - infra-estagio-network
     labels:
-      - "traefik.http.routers.estagio-fatec-api.rule=Host(`fatec.estagio.com`)"
+      - "traefik.http.routers.estagio-fatec-api.rule=Host(`api.fatec.estagio.com`)"
       - "traefik.http.routers.estagio-fatec-api.entrypoints=default"
       - "traefik.docker.network=infra-estagio-network"
       - "traefik.enable=true"
