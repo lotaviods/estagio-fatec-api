@@ -1,0 +1,10 @@
+company_neighborhood_empty_field: The field neighborhood should not be blank.
+company_street_empty_field: The field street should not be blank.
+company_address_number_empty_field: The field number should not be blank.
+company_zip_code_empty_field: The field zip code should not be blank.
+company_city_empty_field: The field city should not be blank.
+company_state_empty_field: The field state should not be blank.
+company_country_empty_field: The field country should not be blank.
+company_latitude_empty_field: The field latitude should not be blank.
+company_longitude_empty_field: The field longitude should not be blank.
+errors: errors

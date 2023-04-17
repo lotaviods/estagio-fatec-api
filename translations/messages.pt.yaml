@@ -1,0 +1,10 @@
+company_neighborhood_empty_field: O campo bairro não deve estar em branco.
+company_street_empty_field: O campo rua não deve estar em branco
+company_address_number_empty_field: O campo numero não deve estar em branco
+company_zip_code_empty_field: O campo cep não deve estar em branco
+company_city_empty_field: O campo cidade não deve estar em branco
+company_state_empty_field: O campo cidade não deve estar em branco
+company_country_empty_field: O campo país não deve estar em branco
+company_latitude_empty_field: O campo latitude não deve estar em branco
+company_longitude_empty_field: O campo longitude não deve estar em branco
+errors: erros

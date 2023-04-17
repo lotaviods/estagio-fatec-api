@@ -6,6 +6,7 @@ use App\Constants\LoginType;
 use App\DTO\LoginDTO;
 use App\Entity\AccessToken;
 use App\Entity\Administrator;
+use App\Entity\CompanyAddress;
 use App\Entity\MasterAdminCreationInvite;
 use App\Entity\Company;
 use App\Entity\Login;
@@ -13,6 +14,7 @@ use App\Entity\Student;
 use App\Helper\ProfilePictureHelper;
 use App\Repository\AdministratorRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Exception;
 use stdClass;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
@@ -48,7 +50,7 @@ class AuthService
         $this->studentService = $studentService;
         $this->adminService = $adminService;
         $this->companyService = $companyService;
-        $this->profilePictureHelper =$profilePictureHelper;
+        $this->profilePictureHelper = $profilePictureHelper;
     }
 
     public function login(LoginDTO $loginDTO): array
@@ -129,7 +131,7 @@ class AuthService
             $entityManager = $this->doctrine->getManager();
             $entityManager->persist($login);
             $entityManager->flush();
-        } catch (\Exception) {
+        } catch (Exception $e) {
             throw new BadRequestHttpException();
         }
 
@@ -208,7 +210,7 @@ class AuthService
         $entityManager->flush();
     }
 
-    public function registerCompany(LoginDTO $loginDTO, Company $company): void
+    public function registerCompany(LoginDTO $loginDTO, Company $company, CompanyAddress $companyAddress): void
     {
         $type = LoginType::COMPANY;
 
@@ -222,10 +224,12 @@ class AuthService
         $login->setRoles(["ROLE_COMPANY"]);
 
         $company->setLogin($login);
-
+        $companyAddress->setCompany($company);
         $entityManager = $this->doctrine->getManager();
+
         $entityManager->persist($login);
         $entityManager->persist($company);
+        $entityManager->persist($companyAddress);
         $entityManager->flush();
 
     }

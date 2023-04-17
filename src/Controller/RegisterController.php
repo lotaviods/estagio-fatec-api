@@ -3,6 +3,8 @@
 namespace App\Controller;
 
 use App\DTO\LoginDTO;
+use App\Entity\CompanyAddress;
+use App\Form\CompanyAddressForm;
 use App\Mapper\AdminMapper;
 use App\Mapper\CompanyMapper;
 use App\Mapper\StudentMapper;
@@ -12,9 +14,17 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class RegisterController extends AbstractController
 {
+    private TranslatorInterface $translator;
+
+    public function __construct(TranslatorInterface $translator)
+    {
+        $this->translator = $translator;
+    }
+
     #[Route('api/v1/register/student', name: 'studentRegister_v1', methods: ['POST'])]
     public function studentRegister(Request $request, AuthService $service): JsonResponse
     {
@@ -45,9 +55,27 @@ class RegisterController extends AbstractController
     #[Route('api/v1/register/company', name: 'companyRegister_v1', methods: ['POST'])]
     public function companyRegister(Request $request, AuthService $service): JsonResponse
     {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        $data = $request->request->all();
 
-        $service->registerCompany(loginDTO: LoginDTO::fromRequest($request), company: CompanyMapper::fromRequest($request));
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        $form = $this->createForm(CompanyAddressForm::class, new CompanyAddress());
+
+        $form->submit($data);
+
+        if (!$form->isSubmitted() || !$form->isValid()) {
+            $errors = [];
+            foreach ($form->getErrors(true) as $error) {
+                $errors[] = $error->getMessage();
+            }
+
+            return new JsonResponse([$this->translator->trans('errors') => $errors], Response::HTTP_BAD_REQUEST);
+        }
+
+        $service->registerCompany(
+            loginDTO: LoginDTO::fromRequest($request),
+            company: CompanyMapper::fromRequest($request),
+            companyAddress: $form->getData()
+        );
 
         return $this->json([], Response::HTTP_CREATED);
     }
