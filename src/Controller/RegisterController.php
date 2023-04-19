@@ -2,9 +2,12 @@
 
 namespace App\Controller;
 
+use App\Constraints\CompanyConstraints;
 use App\DTO\LoginDTO;
+use App\Entity\Company;
 use App\Entity\CompanyAddress;
-use App\Form\CompanyAddressForm;
+use App\Form\Company\CompanyAddressForm;
+use App\Form\Company\CompanyForm;
 use App\Mapper\AdminMapper;
 use App\Mapper\CompanyMapper;
 use App\Mapper\StudentMapper;
@@ -13,16 +16,24 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Validator\Constraints\Blank;
+use Symfony\Component\Validator\Constraints\BlankValidator;
+use Symfony\Component\Validator\Constraints\Collection;
+use Symfony\Component\Validator\Constraints\Optional;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class RegisterController extends AbstractController
 {
     private TranslatorInterface $translator;
+    private ValidatorInterface $validator;
 
-    public function __construct(TranslatorInterface $translator)
+    public function __construct(TranslatorInterface $translator, ValidatorInterface $validator)
     {
         $this->translator = $translator;
+        $this->validator = $validator;
     }
 
     #[Route('api/v1/register/student', name: 'studentRegister_v1', methods: ['POST'])]
@@ -58,13 +69,24 @@ class RegisterController extends AbstractController
         $data = $request->request->all();
 
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
-        $form = $this->createForm(CompanyAddressForm::class, new CompanyAddress());
+        $formAddress = $this->createForm(CompanyAddressForm::class, new CompanyAddress());
+        $constraints = CompanyConstraints::getConstraints($this->translator);
+        //TODO: Remove form and set constraints.
+        $formAddress->submit($data);
 
-        $form->submit($data);
-
-        if (!$form->isSubmitted() || !$form->isValid()) {
+        $violations = $this->validator->validate($request->request->all(), $constraints);
+        if (count($violations) > 0) {
             $errors = [];
-            foreach ($form->getErrors(true) as $error) {
+            foreach ($violations as $v) {
+                $errors[] = str_replace("\"", "", $v->getMessage());
+            }
+            return new JsonResponse([$this->translator->trans('errors') => $errors], Response::HTTP_BAD_REQUEST);
+
+        }
+
+        if (!$formAddress->isValid()) {
+            $errors = [];
+            foreach ($formAddress->getErrors(true) as $error) {
                 $errors[] = $error->getMessage();
             }
 
@@ -74,7 +96,7 @@ class RegisterController extends AbstractController
         $service->registerCompany(
             loginDTO: LoginDTO::fromRequest($request),
             company: CompanyMapper::fromRequest($request),
-            companyAddress: $form->getData()
+            companyAddress: $formAddress->getData()
         );
 
         return $this->json([], Response::HTTP_CREATED);

@@ -65,6 +65,16 @@ class Company
         return $this;
     }
 
+    public function getEmail(): string
+    {
+     return $this->login->getEmail();
+    }
+
+    public function setEmail(string $email): self
+    {
+        $this->login->setEmail($email);
+        return $this;
+    }
     public function isActive(): ?bool
     {
         return $this->active;

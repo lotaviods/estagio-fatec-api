@@ -7,4 +7,5 @@ company_state_empty_field: The field state should not be blank.
 company_country_empty_field: The field country should not be blank.
 company_latitude_empty_field: The field latitude should not be blank.
 company_longitude_empty_field: The field longitude should not be blank.
+field_are_missing: 'The following field are missing: {{ field }}.'
 errors: errors

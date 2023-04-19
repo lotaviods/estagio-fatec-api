@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Form;
+namespace App\Form\Company;
 
 use App\Entity\CompanyAddress;
 use Symfony\Component\Form\AbstractType;
@@ -14,7 +14,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class CompanyAddressForm extends AbstractType
 {
-    private $translator;
+    private TranslatorInterface $translator;
 
     public function __construct(TranslatorInterface $translator)
     {
