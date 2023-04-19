@@ -67,7 +67,7 @@ class Company
 
     public function getEmail(): string
     {
-     return $this->login->getEmail();
+        return $this->login->getEmail();
     }
 
     public function setEmail(string $email): self
@@ -75,6 +75,7 @@ class Company
         $this->login->setEmail($email);
         return $this;
     }
+
     public function isActive(): ?bool
     {
         return $this->active;
@@ -117,6 +118,17 @@ class Company
 
     public function getName(): ?string
     {
-        return $this->login->getName();
+        return $this->login?->getName();
     }
+
+    public function toArray(): array
+    {
+        return [
+            'id' => $this->id,
+            'name' => $this->getName(),
+            'email' => $this->login?->getEmail(),
+            'active' => $this->isActive()
+        ];
+    }
+
 }
