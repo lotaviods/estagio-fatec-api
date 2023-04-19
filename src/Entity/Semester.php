@@ -18,14 +18,11 @@ class Semester
     #[ORM\Column]
     private ?int $number = null;
 
-    #[ORM\ManyToOne(inversedBy: 'semesters')]
+    #[ORM\ManyToOne(cascade: ['persist', 'remove'], inversedBy: 'semesters')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Course $course = null;
 
-    #[ORM\OneToMany(mappedBy: 'semester', targetEntity: Student::class)]
-    private Collection $students;
-
-    #[ORM\OneToMany(mappedBy: 'semester', targetEntity: CollageClass::class)]
+    #[ORM\OneToMany(mappedBy: 'semester', targetEntity: CollageClass::class, cascade: ['persist', 'remove'])]
     private Collection $collageClasses;
 
     #[ORM\Column(length: 255)]

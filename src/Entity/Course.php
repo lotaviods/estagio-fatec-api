@@ -17,10 +17,10 @@ class Course
 
     #[ORM\Column(length: 255)]
     private ?string $name = null;
-    #[ORM\OneToMany(mappedBy: 'targetCourse', targetEntity: JobOffer::class)]
+    #[ORM\OneToMany(mappedBy: 'targetCourse', targetEntity: JobOffer::class, cascade: ['persist', 'remove'])]
     private Collection $jobOffer;
 
-    #[ORM\OneToMany(mappedBy: 'course', targetEntity: Semester::class)]
+    #[ORM\OneToMany(mappedBy: 'course', targetEntity: Semester::class, cascade: ['persist', 'remove'])]
     private Collection $semesters;
 
     #[ORM\OneToMany(mappedBy: 'course', targetEntity: Student::class)]

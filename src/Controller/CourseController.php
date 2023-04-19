@@ -38,7 +38,7 @@ class CourseController extends AbstractController
     #[Route('/api/v1/course', name: 'create_couse_v1', methods: ['POST'])]
     public function createCourse(ManagerRegistry $doctrine, Request $request)
     {
-        $this->denyAccessUnlessGranted('ROLE_ADM');
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
         $name = $request->get("name");
         $description = $request->get("description");
@@ -57,6 +57,26 @@ class CourseController extends AbstractController
         /** @var CourseRepository $repository */
         $repository->save($course, true);
 
+
+        return new JsonResponse(array(), Response::HTTP_OK, [], false);;
+    }
+
+    #[Route('/api/v1/course', name: 'delete_couse_v1', methods: ['DELETE'])]
+    public function deleteCourse(ManagerRegistry $doctrine, Request $request)
+    {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
+        $id  = $request->get("id");
+
+        if($id == null) return ResponseHelper::missingParameterResponse("id");
+
+        $entityManager = $doctrine->getManager();
+        /** @var CourseRepository $repository */
+
+        $repository = $entityManager->getRepository(Course::class);
+        $course = $repository->find($id);
+
+        $repository->remove($course, true);
 
         return new JsonResponse(array(), Response::HTTP_OK, [], false);;
     }

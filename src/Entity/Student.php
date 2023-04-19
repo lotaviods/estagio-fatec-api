@@ -37,7 +37,7 @@ class Student
     #[ORM\ManyToOne(inversedBy: 'students')]
     private ?CollageClass $collageClass = null;
 
-    #[ORM\OneToOne(mappedBy: 'student')]
+    #[ORM\OneToOne(mappedBy: 'student', cascade: ['persist', 'remove'])]
     private ?StudentResume $resume = null;
 
     public function getId(): ?int

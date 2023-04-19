@@ -18,10 +18,10 @@ class CollageClass
     #[ORM\Column(length: 255)]
     private ?string $description = null;
 
-    #[ORM\ManyToOne(inversedBy: 'collageClasses')]
+    #[ORM\ManyToOne(cascade: ['persist', 'remove'], inversedBy: 'collageClasses')]
     private ?Semester $semester = null;
 
-    #[ORM\OneToMany(mappedBy: 'collageClass', targetEntity: Student::class)]
+    #[ORM\OneToMany(mappedBy: 'collageClass', targetEntity: Student::class, cascade: ['persist', 'remove'])]
     private Collection $students;
 
     public function __construct()
