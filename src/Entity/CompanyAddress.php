@@ -51,7 +51,7 @@ class CompanyAddress
     private string $longitude;
 
     #[OneToOne(cascade: ['persist', 'remove'])]
-    #[JoinColumn(nullable: false)]
+    #[JoinColumn(onDelete: "CASCADE")]
     private ?Company $company = null;
 
     public function getCompany(): ?Company
