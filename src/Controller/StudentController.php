@@ -19,6 +19,24 @@ use App\Helper\ResponseHelper;
 
 class StudentController extends AbstractController
 {
+    #[Route('/api/v1/student', name: 'student-list_v1')]
+    public function getStudents(ManagerRegistry $doctrine, Request $request): Response
+    {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
+        $repository = $doctrine->getRepository(Student::class);
+        /** @var Student $student */
+
+        $students = $repository->findAll();
+        $studentArray = [];
+
+        foreach ($students as $student) {
+            $studentArray[] = $student->toArray();
+        }
+
+        return new JsonResponse($studentArray, Response::HTTP_OK, [], false);;
+    }
+
     #[Route('/api/v1/student/{student_id}/detail', name: 'student-detail_v1')]
     public function getStudentDetail(ManagerRegistry $doctrine, Request $request): Response
     {
