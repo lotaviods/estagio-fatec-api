@@ -4,10 +4,8 @@ namespace App\Controller;
 
 use App\Constraints\CompanyConstraints;
 use App\DTO\LoginDTO;
-use App\Entity\Company;
 use App\Entity\CompanyAddress;
 use App\Form\Company\CompanyAddressForm;
-use App\Form\Company\CompanyForm;
 use App\Mapper\AdminMapper;
 use App\Mapper\CompanyMapper;
 use App\Mapper\StudentMapper;
@@ -16,12 +14,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Validator\Constraints\Blank;
-use Symfony\Component\Validator\Constraints\BlankValidator;
-use Symfony\Component\Validator\Constraints\Collection;
-use Symfony\Component\Validator\Constraints\Optional;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
