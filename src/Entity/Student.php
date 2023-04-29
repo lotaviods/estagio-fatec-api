@@ -34,8 +34,8 @@ class Student
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private ?Login $login = null;
 
-    #[ORM\ManyToOne(inversedBy: 'students')]
-    private ?CollageClass $collageClass = null;
+    #[ORM\ManyToOne(targetEntity: Course::class, inversedBy: 'students')]
+    private ?Course $course;
 
     #[ORM\OneToOne(mappedBy: 'student', cascade: ['persist', 'remove'])]
     private ?StudentResume $resume = null;
@@ -127,18 +127,6 @@ class Student
         return $this;
     }
 
-    public function getCollageClass(): ?CollageClass
-    {
-        return $this->collageClass;
-    }
-
-    public function setCollageClass(?CollageClass $collageClass): self
-    {
-        $this->collageClass = $collageClass;
-
-        return $this;
-    }
-
     public function getName(): ?string
     {
         return $this->login->getName();
@@ -159,5 +147,21 @@ class Student
     public function setProfilePicture(?string $profilePicture): void
     {
         $this->login->setProfilePicture($profilePicture);
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getCourse(): ?Course
+    {
+        return $this->course;
+    }
+
+    /**
+     * @param Collection $course
+     */
+    public function setCourse(Collection $course): void
+    {
+        $this->course = $course;
     }
 }

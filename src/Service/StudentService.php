@@ -62,7 +62,7 @@ class StudentService
 
     public function getStudentInformation(Student $student): array
     {
-        $course = $student->getCollageClass()?->getSemester()->getCourse();
+        $course = $student->getCourse();
 
         return [
             "id" => $student->getId(),

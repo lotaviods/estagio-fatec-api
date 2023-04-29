@@ -20,9 +20,6 @@ class Course
     #[ORM\OneToMany(mappedBy: 'targetCourse', targetEntity: JobOffer::class, cascade: ['persist', 'remove'])]
     private Collection $jobOffer;
 
-    #[ORM\OneToMany(mappedBy: 'course', targetEntity: Semester::class, cascade: ['persist', 'remove'])]
-    private Collection $semesters;
-
     #[ORM\OneToMany(mappedBy: 'course', targetEntity: Student::class)]
     private Collection $students;
 
