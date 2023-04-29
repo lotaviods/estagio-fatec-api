@@ -5,7 +5,6 @@ namespace App\Entity;
 use App\Repository\JobOfferRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: JobOfferRepository::class)]
@@ -47,9 +46,6 @@ class JobOffer
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $role = null;
-
-    #[ORM\OneToOne(mappedBy: 'job', cascade: ['persist', 'remove'])]
-    private ?JobLocation $jobLocation = null;
 
     public function __construct()
     {
@@ -139,10 +135,6 @@ class JobOffer
             $newArray += ["target_course" => $this->targetCourse->getName()];
         }
 
-        if ($this->jobLocation != null) {
-            $newArray += ["location" => $this->jobLocation->toArray()];
-        }
-
         $studentLikeIdArray = [];
         /** @var Student $student */
 
@@ -189,28 +181,6 @@ class JobOffer
     public function setCompany(?Company $company): self
     {
         $this->company = $company;
-
-        return $this;
-    }
-
-    public function getJobLocation(): ?JobLocation
-    {
-        return $this->jobLocation;
-    }
-
-    public function setJobLocation(?JobLocation $jobLocation): self
-    {
-        // unset the owning side of the relation if necessary
-        if ($jobLocation === null && $this->jobLocation !== null) {
-            $this->jobLocation->setJobId(null);
-        }
-
-        // set the owning side of the relation if necessary
-        if ($jobLocation !== null && $jobLocation->getJob() !== $this) {
-            $jobLocation->setJobId($this);
-        }
-
-        $this->jobLocation = $jobLocation;
 
         return $this;
     }
