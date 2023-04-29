@@ -15,7 +15,7 @@ class Administrator
 
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(nullable: false)]
-    private ?login $login = null;
+    private ?Login $login = null;
 
     public function getId(): ?int
     {
