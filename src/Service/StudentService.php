@@ -11,6 +11,7 @@ use App\Repository\StudentResumeRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\ObjectManager;
 use stdClass;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class StudentService
 {
@@ -34,6 +35,8 @@ class StudentService
         if ($resume) {
             $this->resumeRepository->remove($resume, true);
         }
+
+        if(!$student) throw new BadRequestHttpException();
 
         $resume = new StudentResume();
 
