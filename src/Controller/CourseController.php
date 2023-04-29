@@ -16,7 +16,7 @@ use Doctrine\ORM\EntityManager;
 
 class CourseController extends AbstractController
 {
-    #[Route('/api/v1/courses/detail', name: 'couses_v1')]
+    #[Route('/api/v1/courses', name: 'couses_v1')]
     public function getAllClasses(ManagerRegistry $doctrine)
     {
         $entityManager = $doctrine->getManager();
