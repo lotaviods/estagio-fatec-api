@@ -116,28 +116,6 @@ class Course
         return $this->semesters;
     }
 
-    public function addSemester(Semester $semester): self
-    {
-        if (!$this->semesters->contains($semester)) {
-            $this->semesters->add($semester);
-            $semester->setCourse($this);
-        }
-
-        return $this;
-    }
-
-    public function removeSemester(Semester $semester): self
-    {
-        if ($this->semesters->removeElement($semester)) {
-            // set the owning side to null (unless already changed)
-            if ($semester->getCourse() === $this) {
-                $semester->setCourse(null);
-            }
-        }
-
-        return $this;
-    }
-
     public function getDescription(): ?string
     {
         return $this->description;
