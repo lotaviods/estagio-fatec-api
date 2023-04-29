@@ -38,4 +38,15 @@ class Administrator
     {
         return $this->getLogin()?->getName() ?? "";
     }
+
+    public function toArray(): array
+    {
+        return [
+            "id" => $this->id,
+            "email" => $this->login->getEmail() ?? "",
+            "name" => $this->getName(),
+            "login_type" => $this->getLogin()?->getType()
+        ];
+    }
+
 }
