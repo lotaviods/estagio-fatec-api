@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Company;
 use App\Entity\JobOffer;
 use App\Entity\Student;
+use App\Helper\ProfilePictureHelper;
 use App\Repository\JobOfferRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -19,6 +20,15 @@ use App\Helper\ResponseHelper;
 
 class StudentController extends AbstractController
 {
+    private ProfilePictureHelper $profilePictureHelper;
+
+    public function __construct(
+        ProfilePictureHelper $profilePictureHelper
+    )
+    {
+        $this->profilePictureHelper = $profilePictureHelper;
+    }
+
     #[Route('/api/v1/student', name: 'student-list_v1')]
     public function getStudents(ManagerRegistry $doctrine, Request $request): Response
     {
@@ -55,13 +65,17 @@ class StudentController extends AbstractController
 
         $studentLogin = $this->getUser();
 
-        if ($student->getLogin()->getId() !== $studentLogin->getId())
-            return new JsonResponse([], 403);
+//        if ($student->getLogin()->getId() !== $studentLogin?->getId())
+//            return new JsonResponse([], 403);
 
         $entityManager = $doctrine->getManager();
 
+        $student = $student->toArray();
 
-        return new JsonResponse($student->toArray(), Response::HTTP_OK, [], false);;
+        $profilePicture = $student["profile_picture"];
+        $student["profile_picture"] = $this->profilePictureHelper->getFullProfileUrl($profilePicture);
+
+        return new JsonResponse($student, Response::HTTP_OK, [], false);;
     }
 
 

@@ -3,6 +3,7 @@
 
 namespace App\Entity;
 
+use App\Helper\ProfilePictureHelper;
 use App\Repository\StudentRepository;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -108,7 +109,11 @@ class Student
         }
 
         return [
+            "id" => $this->id,
+            "profile_picture" => $this->login?->getProfilePicture(),
             "ra" => $this->ra,
+            "name" => $this->getName(),
+            "course_name" => $this->getCourse()?->getName(),
             "email" => $this->login->getEmail() ?? "",
             "applied_jobs" => $jobArray
         ];
