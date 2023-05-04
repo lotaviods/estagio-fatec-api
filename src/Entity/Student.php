@@ -113,6 +113,7 @@ class Student
             "profile_picture" => $this->login?->getProfilePicture(),
             "ra" => $this->ra,
             "name" => $this->getName(),
+            "course_id" => $this->getCourse()?->getId() ?? null,
             "course_name" => $this->getCourse()?->getName(),
             "email" => $this->login->getEmail() ?? "",
             "applied_jobs" => $jobArray
