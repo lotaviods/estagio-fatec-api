@@ -155,18 +155,12 @@ class Student
         $this->login->setProfilePicture($profilePicture);
     }
 
-    /**
-     * @return Collection
-     */
     public function getCourse(): ?Course
     {
         return $this->course;
     }
 
-    /**
-     * @param Collection $course
-     */
-    public function setCourse(Collection $course): void
+    public function setCourse(?Course $course): void
     {
         $this->course = $course;
     }

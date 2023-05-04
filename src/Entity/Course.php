@@ -29,7 +29,6 @@ class Course
     public function __construct()
     {
         $this->jobOffer = new ArrayCollection();
-        $this->semesters = new ArrayCollection();
         $this->students = new ArrayCollection();
     }
 
@@ -52,21 +51,21 @@ class Course
 
     public function getJobs()
     {
-        return $this->jobs;
+        return $this->jobOffer;
     }
 
     public function setJobs($jobs): self
     {
-        $this->jobs = $jobs;
+        $this->jobOffer = $jobs;
         return $this;
     }
 
     public function addJob(JobOffer $job): void
     {
-        if ($this->jobs->contains($job)) {
+        if ($this->jobOffer->contains($job)) {
             return;
         }
-        $this->jobs->add($job);
+        $this->jobOffer->add($job);
     }
 
     /**
@@ -108,13 +107,6 @@ class Course
         ];
     }
 
-    /**
-     * @return Collection<int, Semester>
-     */
-    public function getSemesters(): Collection
-    {
-        return $this->semesters;
-    }
 
     public function getDescription(): ?string
     {
