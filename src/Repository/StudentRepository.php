@@ -68,4 +68,9 @@ class StudentRepository extends ServiceEntityRepository
     {
         return $this->findOneBy(['login' => "{$user->getId()}"]);
     }
+
+    public function findByRa(string $ra): Student
+    {
+        return $this->findOneBy(['ra' => $ra]);
+    }
 }

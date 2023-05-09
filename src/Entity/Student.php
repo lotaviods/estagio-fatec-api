@@ -36,6 +36,7 @@ class Student
     private ?Login $login = null;
 
     #[ORM\ManyToOne(targetEntity: Course::class, inversedBy: 'students')]
+    #[ORM\JoinColumn(name: "course_id", referencedColumnName: "id")]
     private ?Course $course;
 
     #[ORM\OneToOne(mappedBy: 'student', cascade: ['persist', 'remove'])]
