@@ -150,4 +150,28 @@ class JobOfferController extends AbstractController
 
         return new JsonResponse($jobsArray, Response::HTTP_OK, [], false);;
     }
+
+    #[Route('/api/v1/job-offers/{student_id}', name: 'applied-jobs_v1')]
+    public function getAvailableJobsFromStudent(ManagerRegistry $doctrine, Request $request): Response
+    {
+        $studentId = $request->get("student_id");
+        $entityManager = $doctrine->getManager();
+
+        /** @var StudentRepository $repository */
+        $repository = $entityManager->getRepository(Student::class);
+
+        $student = $repository->find($studentId);
+        if (!$student) return new JsonResponse([], Response::HTTP_BAD_REQUEST, [], false);
+
+        $jobsResult = $student->getAppliedJobOffers();
+        $jobsArray = [];
+
+        /** @var JobOffer $job */
+        foreach ($jobsResult as $job) {
+            if ($job->isActive())
+                $jobsArray[] = $job->toArray();
+        }
+
+        return new JsonResponse($jobsArray, Response::HTTP_OK, [], false);;
+    }
 }
