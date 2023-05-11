@@ -41,10 +41,10 @@ class CompanyAddress
     #[Column(name: "state", type: "string", length: 255, nullable: false)]
     private string $state;
 
-    #[Column(name: "country", type: "string", length: 255, nullable: false, options: ["fixed" => true])]
+    #[Column(name: "country", type: "string", length: 255, nullable: true, options: ["fixed" => true])]
     private string $country;
 
-    #[Column(name: "latitude", type: "float", nullable: false)]
+    #[Column(name: "latitude", type: "float", nullable: true)]
     private string $latitude;
 
     #[Column(name: "longitude", type: "float", nullable: false)]

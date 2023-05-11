@@ -81,20 +81,10 @@ class CompanyAddressForm extends AbstractType
                 ]
             ])
             ->add('latitude', NumberType::class, [
-                'required' => true,
-                'constraints' => [
-                    new NotBlank([
-                        'message' => $this->translator->trans('company_latitude_empty_field'),
-                    ]),
-                ]
+                'required' => false
             ])
             ->add('longitude', NumberType::class, [
-                'required' => true,
-                'constraints' => [
-                    new NotBlank([
-                        'message' => $this->translator->trans('company_longitude_empty_field'),
-                    ]),
-                ]
+                'required' => false
             ]);
     }
 
