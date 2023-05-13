@@ -47,7 +47,7 @@ class CompanyAddress
     #[Column(name: "latitude", type: "float", nullable: true)]
     private string $latitude;
 
-    #[Column(name: "longitude", type: "float", nullable: false)]
+    #[Column(name: "longitude", type: "float", nullable: true)]
     private string $longitude;
 
     #[OneToOne(cascade: ['persist', 'remove'])]
