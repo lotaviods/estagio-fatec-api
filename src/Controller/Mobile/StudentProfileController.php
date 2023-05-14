@@ -25,15 +25,15 @@ class StudentProfileController extends AbstractController
 
         $filename = sprintf('%s.%s', uniqid(), $file->guessExtension());
 
-        $uri = $minioService->upload($file, $filename, 'resumes');
+        $uri = $minioService->uploadFile($file, $filename, 'resumes');
 
         $studentService->setStudentResumeUri($uri, $studentId);
 
         return $this->json([]);
     }
 
-    #[Route('/api/v1/mobile/student/profile_picture', name: 'save_profile_picture', methods: ['POST'])]
-    public function saveProfilePicture(Request        $request,
+    #[Route('/api/v1/mobile/student/profile_picture', name: 'save_student_profile_picture', methods: ['POST'])]
+    public function saveStudentProfilePicture(Request        $request,
                                MinioService   $minioService,
                                StudentService $studentService
     ): JsonResponse
@@ -43,7 +43,7 @@ class StudentProfileController extends AbstractController
 
         $filename = sprintf('%s.%s', uniqid(), $file->guessExtension());
 
-        $uri = $minioService->upload($file, $filename, 'pictures');
+        $uri = $minioService->uploadFile($file, $filename, 'pictures');
 
         $studentService->setStudentProfilePicture($uri, $studentId);
 

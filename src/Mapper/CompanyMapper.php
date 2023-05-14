@@ -8,11 +8,10 @@ use Symfony\Component\HttpFoundation\Request;
 
 class CompanyMapper
 {
-    public static function fromRequest(Request $request): Company
+    public static function fromRequest(): Company
     {
         $company = new Company();
         $company->setActive(true);
-        $company->setProfilePicture($request->get("profile_picture"));
         return $company;
     }
 }

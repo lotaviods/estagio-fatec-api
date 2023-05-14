@@ -34,14 +34,22 @@ class RegisterController extends AbstractController
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
-        $service->registerStudent(StudentMapper::fromRequest($request), LoginDTO::fromRequest($request));
+        $service->registerStudent(
+            StudentMapper::fromRequest($request),
+            LoginDTO::fromRequest($request),
+            $request->get("profile_picture")
+        );
         return $this->json([], Response::HTTP_CREATED);
     }
 
     #[Route('api/v1/register/master', name: 'adminMasterRegister_v1', methods: ['POST'])]
     public function adminMasterRegister(Request $request, AuthService $service): JsonResponse
     {
-        $service->registerAdminMaster(token: $request->get("invite_token"), loginDTO: LoginDTO::fromRequest($request), admin: AdminMapper::fromRequest($request));
+        $service->registerAdminMaster(token: $request->get("invite_token"),
+            loginDTO: LoginDTO::fromRequest($request),
+            admin: AdminMapper::fromRequest($request),
+            profileImage: $request->get("profile_picture")
+        );
 
         return $this->json([], Response::HTTP_CREATED);
     }
@@ -51,7 +59,11 @@ class RegisterController extends AbstractController
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
-        $service->registerAdmin(loginDTO: LoginDTO::fromRequest($request), admin: AdminMapper::fromRequest($request));
+        $service->registerAdmin(
+            loginDTO: LoginDTO::fromRequest($request),
+            admin: AdminMapper::fromRequest($request),
+            profileImage: $request->get("profile_picture")
+        );
 
         return $this->json([], Response::HTTP_CREATED);
     }
@@ -88,8 +100,9 @@ class RegisterController extends AbstractController
 
         $service->registerCompany(
             loginDTO: LoginDTO::fromRequest($request),
-            company: CompanyMapper::fromRequest($request),
-            companyAddress: $formAddress->getData()
+            company: CompanyMapper::fromRequest(),
+            companyAddress: $formAddress->getData(),
+            profileImage: $request->get("profile_picture")
         );
 
         return $this->json([], Response::HTTP_CREATED);

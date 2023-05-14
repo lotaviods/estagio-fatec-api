@@ -114,7 +114,11 @@ class AuthService
         return $accessToken;
     }
 
-    public function createLogin(?string $email, ?string $password, ?string $name, ?int $type): Login
+    public function createLogin(?string $email,
+                                ?string $password,
+                                ?string $name,
+                                ?int    $type,
+                                ?string $profilePicture): Login
     {
         try {
             if (!$password || !$email || !$name || !$type) throw new BadRequestHttpException();
@@ -128,25 +132,33 @@ class AuthService
             $login->setName($name);
             $login->SetType($type);
 
+            if ($profilePicture) {
+                $path = $this->profilePictureHelper->saveProfilePicture($profilePicture);
+                if ($path)
+                    $login->setProfilePicture($path);
+            }
+
             $entityManager = $this->doctrine->getManager();
             $entityManager->persist($login);
             $entityManager->flush();
         } catch (Exception $e) {
-            throw new BadRequestHttpException();
+            throw new BadRequestHttpException($e->getMessage());
         }
 
         return $login;
     }
 
-    public function registerStudent(Student $student, LoginDTO $dto, int $type = LoginType::STUDENT): void
+    public function registerStudent(Student  $student,
+                                    LoginDTO $dto,
+                                    ?string  $profileImage,
+                                    int      $type = LoginType::STUDENT): void
     {
-        //TODO Add more types of register not only student
-
         $login = $this->createLogin(
             $dto->getEmail(),
             $dto->getPassword(),
             $dto->getName(),
             $type,
+            $profileImage
         );
 
         $login->setRoles(["ROLE_STUDENT"]);
@@ -158,7 +170,10 @@ class AuthService
         $entityManager->flush();
     }
 
-    public function registerAdminMaster(string $token, LoginDTO $loginDTO, Administrator $admin): void
+    public function registerAdminMaster(string        $token,
+                                        LoginDTO      $loginDTO,
+                                        Administrator $admin,
+                                        ?string       $profileImage): void
     {
         $type = LoginType::ADMIN_MASTER;
 
@@ -175,7 +190,7 @@ class AuthService
         if ($invite->isExpired())
             throw new UnauthorizedHttpException('token');
 
-        $this->createAdminLogin($loginDTO, $type, $admin);
+        $this->createAdminLogin($loginDTO, $type, $admin, $profileImage);
 
         $login = $admin->getLogin();
         $login->addRoles(["ROLE_MASTER"]);
@@ -185,20 +200,24 @@ class AuthService
         $entityManager->flush();
     }
 
-    public function registerAdmin(LoginDTO $loginDTO, Administrator $admin): void
+    public function registerAdmin(LoginDTO $loginDTO, Administrator $admin, ?string $profileImage): void
     {
         $type = LoginType::ADMIN;
 
-        $this->createAdminLogin($loginDTO, $type, $admin);
+        $this->createAdminLogin($loginDTO, $type, $admin, $profileImage);
     }
 
-    public function createAdminLogin(LoginDTO $loginDTO, int $type, Administrator $admin): void
+    public function createAdminLogin(LoginDTO      $loginDTO,
+                                     int           $type,
+                                     Administrator $admin,
+                                     ?string       $profileImage): void
     {
         $login = $this->createLogin(
             $loginDTO->getEmail(),
             $loginDTO->getPassword(),
             $loginDTO->getName(),
             $type,
+            $profileImage
         );
 
         $login->setRoles(["ROLE_ADMIN"]);
@@ -210,7 +229,10 @@ class AuthService
         $entityManager->flush();
     }
 
-    public function registerCompany(LoginDTO $loginDTO, Company $company, CompanyAddress $companyAddress): void
+    public function registerCompany(LoginDTO       $loginDTO,
+                                    Company        $company,
+                                    CompanyAddress $companyAddress,
+                                    ?string        $profileImage): void
     {
         $type = LoginType::COMPANY;
 
@@ -219,6 +241,7 @@ class AuthService
             $loginDTO->getPassword(),
             $loginDTO->getName(),
             $type,
+            $profileImage
         );
 
         $login->setRoles(["ROLE_COMPANY"]);

@@ -7,7 +7,7 @@ use GuzzleHttp\Psr7\Uri;
 
 class MinioService
 {
-    private $client;
+    private S3Client $client;
 
     public function __construct(string $endpoint, string $accessKey, string $secretKey)
     {
@@ -25,13 +25,28 @@ class MinioService
 
     }
 
-    public function upload(mixed $file, string $fileName, string $bucketName): string
+    public function uploadFile(mixed $file, string $fileName, string $bucketName): string
     {
         $this->client->putObject([
             'Bucket' => $bucketName,
             'Key' => $fileName,
             'Body' => fopen($file, 'r'),
             'ACL' => 'public-read',
+        ]);
+
+        $url = $this->client->getObjectUrl($bucketName, $fileName);
+
+        return str_replace($this->client->getEndpoint(), '', $url);
+    }
+
+    public function upload(mixed $file, string $fileName, string $bucketName): string
+    {
+        $this->client->putObject([
+            'Bucket' => $bucketName,
+            'Key' => $fileName,
+            'Body' => $file,
+            'ACL' => 'public-read',
+            'ContentType'=> 'image/png'
         ]);
 
         $url = $this->client->getObjectUrl($bucketName, $fileName);
