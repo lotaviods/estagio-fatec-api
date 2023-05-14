@@ -3,11 +3,14 @@
 namespace App\Entity;
 
 use App\Repository\JobOfferRepository;
+use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: JobOfferRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 class JobOffer
 {
     #[ORM\Id]
@@ -47,10 +50,24 @@ class JobOffer
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $role = null;
 
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    private ?\DateTimeInterface $created_at = null;
+
     public function __construct()
     {
         $this->subscribedStudents = new ArrayCollection();
         $this->studentLikes = new ArrayCollection();
+    }
+
+    #[ORM\PrePersist]
+    public function setCreatedAt(): void
+    {
+        $this->created_at = new \DateTime();
+    }
+
+    public function getCreatedAt(): ?\DateTimeInterface
+    {
+        return $this->created_at;
     }
 
     public function getId(): ?int
@@ -118,6 +135,7 @@ class JobOffer
     {
         $newArray = [
             "id" => $this->id,
+            "created_at" => $this->getCreatedAt()->format(DateTimeInterface::ATOM),
             "description" => $this->description,
             "role" => $this->role,
             "job_experience" => $this->job_experience,
