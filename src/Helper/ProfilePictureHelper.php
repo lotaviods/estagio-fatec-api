@@ -19,7 +19,7 @@ class ProfilePictureHelper
         return "{$this->minioService->getEndpoint()}$profileUri";
     }
 
-    public function saveProfilePicture(string $base64): ?string
+    public function saveImageBase64(string $base64, ?string $bucket = null): ?string
     {
         try {
             $array = explode(",", $base64);
@@ -34,7 +34,7 @@ class ProfilePictureHelper
             return $this->minioService->upload(
                 $imageData,
                 $name . ".$type",
-                'pictures'
+                $bucket ?? 'pictures'
             );
         } catch (\Exception) {
             return null;

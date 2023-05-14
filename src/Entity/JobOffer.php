@@ -184,4 +184,12 @@ class JobOffer
 
         return $this;
     }
+
+    /**
+     * @return string|null
+     */
+    public function getPromotionalImageUrl(): ?string
+    {
+        return $this->promotionalImageUrl;
+    }
 }

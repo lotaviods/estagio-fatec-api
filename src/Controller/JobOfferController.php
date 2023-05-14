@@ -42,6 +42,9 @@ class JobOfferController extends AbstractController
                 $currentJob = $job->toArray();
                 /** @var JobOffer $job */
                 $currentJob["company_profile_picture"] = $job->getCompany()?->getLogin()?->getProfilePictureUrl($this->profilePictureHelper);
+                if ($currentJob["promotional_image_url"]) {
+                    $currentJob["promotional_image_url"] = $this->profilePictureHelper->getFullProfileUrl($currentJob["promotional_image_url"]);
+                }
                 $jobsArray[] = $currentJob;
             }
 
@@ -88,7 +91,7 @@ class JobOfferController extends AbstractController
         $targetCourse = $request->get("target_course_id");
         $jobExperience = $request->get("experience");
         $role = $request->get("role");
-        $prom_image_url = $request->get("prom_image_url");
+        $prom_image = $request->get("prom_image");
 
         $hasCompany = $companyId !== null;
         $hasDescription = $jobDescription !== null;
@@ -124,7 +127,12 @@ class JobOfferController extends AbstractController
         $job->setCompany($company);
         $job->setTargetCourse($targetCourse);
         $job->setRole($role);
-        $job->setPromotionalUrl($prom_image_url);
+
+        if ($prom_image) {
+            $path = $this->profilePictureHelper->saveImageBase64($prom_image, "promo-job-images");
+            if ($path)
+                $job->setPromotionalUrl($path);
+        }
 
         $repository->save($job, true);
 
@@ -143,6 +151,9 @@ class JobOfferController extends AbstractController
             $currentJob = $job->toArray();
             /** @var JobOffer $job */
             $currentJob["company_profile_picture"] = $job->getCompany()?->getLogin()?->getProfilePictureUrl($this->profilePictureHelper);
+            if ($currentJob["promotional_image_url"]) {
+                $currentJob["promotional_image_url"] = $this->profilePictureHelper->getFullProfileUrl($currentJob["promotional_image_url"]);
+            }
             $jobsArray[] = $currentJob;
         }
 
@@ -163,6 +174,9 @@ class JobOfferController extends AbstractController
                 $currentJob = $job->toArray();
                 /** @var JobOffer $job */
                 $currentJob["company_profile_picture"] = $job->getCompany()?->getLogin()?->getProfilePictureUrl($this->profilePictureHelper);
+                if ($job->getPromotionalImageUrl()) {
+                    $currentJob["promotional_image_url"] = $this->profilePictureHelper->getFullProfileUrl($currentJob["promotional_image_url"]);
+                }
                 $jobsArray[] = $currentJob;
             }
         }
@@ -191,6 +205,9 @@ class JobOfferController extends AbstractController
                 $currentJob = $job->toArray();
                 /** @var JobOffer $job */
                 $currentJob["company_profile_picture"] = $job->getCompany()?->getLogin()?->getProfilePictureUrl($this->profilePictureHelper);
+                if ($currentJob["promotional_image_url"]) {
+                    $currentJob["promotional_image_url"] = $this->profilePictureHelper->getFullProfileUrl($currentJob["promotional_image_url"]);
+                }
                 $jobsArray[] = $currentJob;
             }
         }

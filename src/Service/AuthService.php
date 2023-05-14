@@ -133,7 +133,7 @@ class AuthService
             $login->SetType($type);
 
             if ($profilePicture) {
-                $path = $this->profilePictureHelper->saveProfilePicture($profilePicture);
+                $path = $this->profilePictureHelper->saveImageBase64($profilePicture);
                 if ($path)
                     $login->setProfilePicture($path);
             }
