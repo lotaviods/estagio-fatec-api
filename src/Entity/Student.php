@@ -20,14 +20,14 @@ class Student
     private ?string $ra = null;
 
     #[ORM\JoinTable(name: 'student_applied_jobs')]
-    #[ORM\JoinColumn('student_id', referencedColumnName: "id")]
-    #[ORM\InverseJoinColumn(name: 'job_id', referencedColumnName: "id")]
+    #[ORM\JoinColumn('student_id', referencedColumnName: "id", onDelete: "CASCADE")]
+    #[ORM\InverseJoinColumn(name: 'job_id', referencedColumnName: "id", onDelete: "CASCADE")]
     #[ORM\ManyToMany(targetEntity: JobOffer::class)]
     private Collection $appliedJobs;
 
     #[ORM\JoinTable(name: 'student_liked_jobs')]
-    #[ORM\JoinColumn('student_id', referencedColumnName: "id")]
-    #[ORM\InverseJoinColumn(name: 'job_id', referencedColumnName: "id")]
+    #[ORM\JoinColumn('student_id', referencedColumnName: "id", onDelete: "CASCADE")]
+    #[ORM\InverseJoinColumn(name: 'job_id', referencedColumnName: "id", onDelete: "CASCADE")]
     #[ORM\ManyToMany(targetEntity: JobOffer::class)]
     private Collection $likedJobs;
 
