@@ -34,9 +34,9 @@ class StudentController extends AbstractController
     private TranslatorInterface $translator;
 
     public function __construct(
-        ProfilePictureHelper  $profilePictureHelper,
-        UserProviderInterface $userProvider,
-        TranslatorInterface   $translator,
+        ProfilePictureHelper        $profilePictureHelper,
+        UserProviderInterface       $userProvider,
+        TranslatorInterface         $translator,
         UserPasswordHasherInterface $passwordHasher
     )
     {
@@ -162,12 +162,12 @@ class StudentController extends AbstractController
 
         $entityManager = $doctrine->getManager();
 
-        $student = $student->toArray();
+        $studentArray = $student->toArray();
 
         $profilePicture = $student["profile_picture"];
-        $student["profile_picture"] = $this->profilePictureHelper->getFullProfileUrl($profilePicture);
+        $studentArray["profile_picture"] = $student->getLogin()?->getProfilePictureUrl($this->profilePictureHelper);
 
-        return new JsonResponse($student, Response::HTTP_OK, [], false);;
+        return new JsonResponse($studentArray, Response::HTTP_OK, [], false);;
     }
 
     #[Route('/api/v1/student/{student_id}/detail', name: 'student-detail_v1')]

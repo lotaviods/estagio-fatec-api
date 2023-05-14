@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Helper\ProfilePictureHelper;
 use App\Repository\LoginUserRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -137,6 +138,11 @@ class Login implements UserInterface, PasswordAuthenticatedUserInterface
     public function getProfilePicture(): ?string
     {
         return $this->profilePicture;
+    }
+
+    public function getProfilePictureUrl(ProfilePictureHelper $profilePictureHelper): ?string
+    {
+        return $profilePictureHelper->getFullProfileUrl($this->getProfilePicture());
     }
 
     /**

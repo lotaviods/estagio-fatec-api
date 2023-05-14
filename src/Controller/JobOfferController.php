@@ -6,6 +6,7 @@ use App\Entity\Company;
 use App\Entity\Course;
 use App\Entity\JobOffer;
 use App\Entity\Student;
+use App\Helper\ProfilePictureHelper;
 use App\Repository\JobOfferRepository;
 use App\Repository\StudentRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -21,6 +22,12 @@ use Symfony\Component\Serializer\Encoder\JsonEncoder;
 
 class JobOfferController extends AbstractController
 {
+    private ProfilePictureHelper $profilePictureHelper;
+
+    public function __construct(ProfilePictureHelper $profilePictureHelper)
+    {
+        $this->profilePictureHelper = $profilePictureHelper;
+    }
 
     #[Route('/api/v1/job-offers/available', name: 'jobs_available_v1')]
     public function getAllAvailableJobs(ManagerRegistry $doctrine): Response
@@ -31,11 +38,16 @@ class JobOfferController extends AbstractController
         $jobsArray = [];
 
         foreach ($jobsResult as $job) {
-            if ($job->isActive())
-                $jobsArray[] = $job->toArray();
+            if ($job->isActive()) {
+                $currentJob = $job->toArray();
+                /** @var JobOffer $job */
+                $currentJob["company_profile_picture"] = $job->getCompany()?->getLogin()?->getProfilePictureUrl($this->profilePictureHelper);
+                $jobsArray[] = $currentJob;
+            }
+
         }
 
-        if(empty($jobsArray)) return JsonResponse($jobsArray, Response::HTTP_NO_CONTENT, [], false);
+        if (empty($jobsArray)) return JsonResponse($jobsArray, Response::HTTP_NO_CONTENT, [], false);
 
         return new JsonResponse($jobsArray, Response::HTTP_OK, [], false);
     }
@@ -128,7 +140,10 @@ class JobOfferController extends AbstractController
         $jobsArray = [];
 
         foreach ($jobsResult as $job) {
-            $jobsArray[] = $job->toArray();
+            $currentJob = $job->toArray();
+            /** @var JobOffer $job */
+            $currentJob["company_profile_picture"] = $job->getCompany()?->getLogin()?->getProfilePictureUrl($this->profilePictureHelper);
+            $jobsArray[] = $currentJob;
         }
 
         return new JsonResponse($jobsArray, Response::HTTP_OK, [], false);;
@@ -144,8 +159,12 @@ class JobOfferController extends AbstractController
         $jobsArray = [];
         /** @var JobOffer $job */
         foreach ($jobsResult as $job) {
-            if ($job->isActive() && $job->getTargetCourse()->getId() == $couseId)
-                $jobsArray[] = $job->toArray();
+            if ($job->isActive() && $job->getTargetCourse()->getId() == $couseId) {
+                $currentJob = $job->toArray();
+                /** @var JobOffer $job */
+                $currentJob["company_profile_picture"] = $job->getCompany()?->getLogin()?->getProfilePictureUrl($this->profilePictureHelper);
+                $jobsArray[] = $currentJob;
+            }
         }
 
         return new JsonResponse($jobsArray, Response::HTTP_OK, [], false);;
@@ -168,8 +187,12 @@ class JobOfferController extends AbstractController
 
         /** @var JobOffer $job */
         foreach ($jobsResult as $job) {
-            if ($job->isActive())
-                $jobsArray[] = $job->toArray();
+            if ($job->isActive()) {
+                $currentJob = $job->toArray();
+                /** @var JobOffer $job */
+                $currentJob["company_profile_picture"] = $job->getCompany()?->getLogin()?->getProfilePictureUrl($this->profilePictureHelper);
+                $jobsArray[] = $currentJob;
+            }
         }
 
         return new JsonResponse($jobsArray, Response::HTTP_OK, [], false);;

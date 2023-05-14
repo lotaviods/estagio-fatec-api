@@ -3,8 +3,6 @@
 namespace App\Helper;
 
 use App\Service\MinioService;
-use finfo;
-use mysql_xdevapi\Exception;
 
 class ProfilePictureHelper
 {
