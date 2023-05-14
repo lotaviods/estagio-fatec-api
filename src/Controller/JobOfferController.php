@@ -214,4 +214,24 @@ class JobOfferController extends AbstractController
 
         return new JsonResponse($jobsArray, Response::HTTP_OK, [], false);;
     }
+
+    #[Route('/api/v1/job-offer', name: 'job-offer-delete_v1', methods: ['DELETE'])]
+    public function deleteJobOffer(ManagerRegistry $doctrine, Request $request): Response
+    {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
+        $id = $request->get("id");
+
+        if ($id == null) return ResponseHelper::missingParameterResponse("id");
+
+        $entityManager = $doctrine->getManager();
+        /** @var JobOfferRepository $repository */
+
+        $repository = $entityManager->getRepository(JobOffer::class);
+        $jobOffer = $repository->find($id);
+
+        $repository->remove($jobOffer, true);
+
+        return new JsonResponse(array(), Response::HTTP_OK, [], false);
+    }
 }
