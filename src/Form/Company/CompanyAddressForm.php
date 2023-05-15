@@ -73,12 +73,8 @@ class CompanyAddressForm extends AbstractType
                     ]),
                 ]
             ])
-            ->add('country', CountryType::class, [
-                'constraints' => [
-                    new NotBlank([
-                        'message' => $this->translator->trans('company_country_empty_field'),
-                    ]),
-                ]
+            ->add('country', TextType::class, [
+                'required' => false
             ])
             ->add('latitude', NumberType::class, [
                 'required' => false
