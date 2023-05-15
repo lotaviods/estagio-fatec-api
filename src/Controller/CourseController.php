@@ -80,4 +80,22 @@ class CourseController extends AbstractController
 
         return new JsonResponse(array(), Response::HTTP_OK, [], false);;
     }
+
+    #[Route('/api/v1/course/{id}', name: 'get_couse_by_id_v1', methods: ['GET'])]
+    public function getCourse(ManagerRegistry $doctrine, Request $request)
+    {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
+        $id  = $request->get("id");
+
+        if($id == null) return ResponseHelper::missingParameterResponse("id");
+
+        $entityManager = $doctrine->getManager();
+        /** @var CourseRepository $repository */
+
+        $repository = $entityManager->getRepository(Course::class);
+        $course = $repository->find($id);
+
+        return new JsonResponse($course->toArray(), Response::HTTP_OK, [], false);;
+    }
 }
