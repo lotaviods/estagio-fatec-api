@@ -17,9 +17,6 @@ class CompanyAddress
     #[Column(name: "id", type: "integer", nullable: false)]
     private int $id;
 
-    #[Column(name: "description", type: "string", length: 255, nullable: true)]
-    private ?string $description;
-
     #[Column(name: "street", type: "string", length: 255, nullable: false)]
     private string $street;
 
@@ -65,23 +62,7 @@ class CompanyAddress
 
         return $this;
     }
-
-    /**
-     * @return string|null
-     */
-    public function getDescription(): ?string
-    {
-        return $this->description;
-    }
-
-    /**
-     * @param string|null $description
-     */
-    public function setDescription(?string $description): void
-    {
-        $this->description = $description;
-    }
-
+    
     /**
      * @return string
      */

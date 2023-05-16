@@ -130,6 +130,7 @@ class Company
     {
         return [
             'id' => $this->id,
+            'description' => $this->login->$description;
             'name' => $this->getName(),
             'email' => $this->login?->getEmail(),
             'active' => $this->isActive(),

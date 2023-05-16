@@ -24,9 +24,6 @@ class CompanyAddressForm extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('description', TextType::class, [
-                'required' => false,
-            ])
             ->add('street', TextType::class, [
                 'constraints' => [
                     new NotBlank([
