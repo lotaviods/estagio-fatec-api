@@ -42,13 +42,7 @@ class CompanyForm extends AbstractType
                     ]),
                 ],
             ])
-            ->add('description', TextType::class, [
-                'constraints' => [
-                    new NotBlank([
-                        'message' => $this->translator->trans('company_description_empty_field'),
-                    ]),
-                ],
-            ])->add('profile_picture', TextType::class);
+            ->add('profile_picture', TextType::class);
     }
 
     public function configureOptions(OptionsResolver $resolver)
