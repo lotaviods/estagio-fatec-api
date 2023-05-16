@@ -12,11 +12,6 @@ class CompanyConstraints
     public static function getConstraints(TranslatorInterface $translator): Collection
     {
         return new Collection(fields: [
-            'description' => [
-                new NotBlank([
-                    'message' => $translator->trans('company_description_empty_field'),
-                ])
-            ],
             'password' => [
                 new NotBlank([
                     'message' => $translator->trans('company_password_empty_field'),
