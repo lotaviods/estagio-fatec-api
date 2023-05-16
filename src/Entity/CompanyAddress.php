@@ -45,10 +45,10 @@ class CompanyAddress
     private string $country;
 
     #[Column(name: "latitude", type: "float", nullable: true)]
-    private string $latitude;
+    private ?string $latitude = null;
 
     #[Column(name: "longitude", type: "float", nullable: true)]
-    private string $longitude;
+    private ?string $longitude = null;
 
     #[OneToOne(cascade: ['persist', 'remove'])]
     #[JoinColumn(onDelete: "CASCADE")]
@@ -240,5 +240,22 @@ class CompanyAddress
     public function setLongitude(string $longitude): void
     {
         $this->longitude = $longitude;
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'description' => $this->description,
+            'street' => $this->street,
+            'number' => $this->number,
+            'neighborhood' => $this->neighborhood,
+            'complement' => $this->complement,
+            'zip_code'=> $this->zipCode,
+            'city' => $this->city,
+            'state' => $this->state,
+            'country' => $this->country,
+            'latitude' => $this->latitude,
+            'longitude' => $this->longitude
+        ];
     }
 }

@@ -27,6 +27,9 @@ class Company
     #[ORM\JoinColumn(nullable: false)]
     private ?Login $login = null;
 
+    #[ORM\OneToOne(mappedBy: "company", targetEntity: CompanyAddress::class)]
+    private ?CompanyAddress $address = null;
+
     public function __construct()
     {
         $this->job_offer = new ArrayCollection();
@@ -129,7 +132,8 @@ class Company
             'id' => $this->id,
             'name' => $this->getName(),
             'email' => $this->login?->getEmail(),
-            'active' => $this->isActive()
+            'active' => $this->isActive(),
+            'address' => $this->address?->toArray()
         ];
     }
 
