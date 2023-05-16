@@ -226,7 +226,6 @@ class CompanyAddress
     public function toArray(): array
     {
         return [
-            'description' => $this->description,
             'street' => $this->street,
             'number' => $this->number,
             'neighborhood' => $this->neighborhood,
