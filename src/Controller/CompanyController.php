@@ -140,10 +140,13 @@ class CompanyController extends AbstractController
             $company->getLogin()?->setEmail($newEmail);
         }
 
-        if ($newName) {
-            $company->getLogin()?->setName($newName);
-        }
+        $login = $company->getLogin()
 
+        if ($newName) {
+            $login?->setName($newName);
+        }
+        
+        $manager->persist($login);
         $manager->persist($company);
         $manager->flush();
 
