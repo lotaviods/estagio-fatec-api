@@ -11,15 +11,25 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\User\UserProviderInterface;
 
 class CompanyController extends AbstractController
 {
     private ProfilePictureHelper $profilePictureHelper;
+    private UserPasswordHasherInterface $passwordHasher;
 
-    public function __construct(ProfilePictureHelper $profilePictureHelper)
+    private UserProviderInterface $userProvider;
+
+    public function __construct(ProfilePictureHelper        $profilePictureHelper,
+                                UserPasswordHasherInterface $passwordHasher,
+                                UserProviderInterface       $userProvider)
     {
         $this->profilePictureHelper = $profilePictureHelper;
+        $this->passwordHasher = $passwordHasher;
+        $this->userProvider = $userProvider;
     }
 
     #[Route('/api/v1/company', name: 'company_v1', methods: ['GET'])]
@@ -82,5 +92,61 @@ class CompanyController extends AbstractController
         $repository->remove($course, true);
 
         return new JsonResponse(array(), Response::HTTP_OK, [], false);
+    }
+
+    #[Route('/api/v1/company', name: 'company-update_v1', methods: ['PUT'])]
+    public function updateCompany(ManagerRegistry $doctrine, Request $request): Response
+    {
+        $manager = $doctrine->getManager();
+
+        /** TODO: Refactor and set most of this in services */
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
+        $id = $request->get("id");
+        $isActive = $request->get("is_active");
+        $newName = $request->get("name");
+        $newEmail = $request->get("email");
+        $newPassword = $request->get("password");
+        $newProfilePicture = $request->get("profile_picture");
+
+        if ($id == null) return ResponseHelper::missingParameterResponse("id");
+
+
+        /** @var CompanyRepository $repository */
+        $repository = $doctrine->getRepository(Company::class);
+
+        /** @var Company $company */
+        $company = $repository->find($id);
+
+        if (!$company)
+            throw new BadRequestHttpException();
+
+        if ($newProfilePicture) {
+            $path = $this->profilePictureHelper->saveImageBase64($newProfilePicture);
+            if ($path)
+                $company->setProfilePicture($path);
+        }
+
+        if ($isActive != null) {
+            $company->setActive($isActive);
+        }
+
+        if ($newPassword) {
+            $pass = $this->passwordHasher->hashPassword($company->getLogin(), $newPassword);
+            $this->userProvider->upgradePassword($company->getLogin(), $pass);
+        }
+
+        if ($newEmail) {
+            $company->getLogin()?->setEmail($newEmail);
+        }
+
+        if ($newName) {
+            $company->getLogin()?->setName($newName);
+        }
+
+        $manager->persist($company);
+        $manager->flush();
+
+        return new JsonResponse([], Response::HTTP_OK, [], false);;
     }
 }
