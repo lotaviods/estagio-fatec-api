@@ -140,7 +140,7 @@ class CompanyController extends AbstractController
             $company->getLogin()?->setEmail($newEmail);
         }
 
-        $login = $company->getLogin()
+        $login = $company->getLogin();
 
         if ($newName) {
             $login?->setName($newName);
