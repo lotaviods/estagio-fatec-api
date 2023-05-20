@@ -174,7 +174,7 @@ class JobOfferController extends AbstractController
         /** @var JobOfferRepository $repository */
         $repository = $entityManager->getRepository(JobOffer::class);
 
-        $jobsResult = $this->getJobsByLogin($this->getUser(), $repository);
+        $jobsResult = $this->getJobsByLogin($this->getUser(), $repository, $entityManager);
         $jobsArray = [];
 
         foreach ($jobsResult as $job) {
@@ -265,13 +265,13 @@ class JobOfferController extends AbstractController
         return new JsonResponse(array(), Response::HTTP_OK, [], false);
     }
 
-    private function getJobsByLogin(?UserInterface $user)
+    private function getJobsByLogin(?UserInterface $user, JobOfferRepository $repository,EntityManager $entityManager)
     {
         $userRoles = $user->getRoles();
         if (in_array('ROLE_COMPANY', $userRoles)) {
             /** @var CompanyRepository $companyRepo */
             $companyRepo = $entityManager->getRepository(Company::class);
-            $company = $companyRepo->findOneBy(['login' => $this->getUser()->getUserIdentifier()]);
+            $company = $companyRepo->findOneBy(['login' => $this->getUser()->getId()]);
             return $repository->findBy(['company' => $company->getId()]);
         }
         return $repository->findAll();
