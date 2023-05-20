@@ -37,42 +37,42 @@ class CompanyAddressMapper
         $newLatitude = $request->get("latitude");
         $newLongitude = $request->get("longitude");
 
-        if ($newStreet) {
+        if (!is_null($newStreet)) {
             $address->setStreet($newStreet);
         }
 
-        if ($newNumber) {
+        if (!is_null($newNumber)) {
             $address->setNumber($newNumber);
         }
 
-        if ($newNeighborhood) {
+        if (!is_null($newNeighborhood)) {
             $address->setNeighborhood($newNeighborhood);
         }
 
-        if ($newComplement) {
+        if (!is_null($newComplement)) {
             $address->setComplement($newComplement);
         }
 
-        if ($newZipCode) {
+        if (!is_null($newZipCode)) {
             $address->setZipCode($newZipCode);
         }
 
-        if ($newCity) {
+        if (!is_null($newCity)) {
             $address->setCity($newCity);
         }
 
-        if ($newCountry) {
+        if (!is_null($newCountry)) {
             $address->setCountry($newCountry);
         }
 
-        if ($newState) {
+        if (!is_null($newState)) {
             $address->setState($newState);
         }
 
-        if ($newLatitude) {
+        if (!is_null($newLatitude)) {
             $address->setLatitude($newLatitude);
         }
-        if($newLongitude) {
+        if(!is_null($newLongitude)) {
             $address->setLongitude($newLongitude);
         }
         return $address;
