@@ -43,7 +43,7 @@ class CourseController extends AbstractController
         $name = $request->get("name");
         $description = $request->get("description");
 
-        if($name == null) return ResponseHelper::missingParameterResponse("name");
+        if ($name == null) return ResponseHelper::missingParameterResponse("name");
 
         $entityManager = $doctrine->getManager();
 
@@ -66,9 +66,9 @@ class CourseController extends AbstractController
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
-        $id  = $request->get("id");
+        $id = $request->get("id");
 
-        if($id == null) return ResponseHelper::missingParameterResponse("id");
+        if ($id == null) return ResponseHelper::missingParameterResponse("id");
 
         $entityManager = $doctrine->getManager();
         /** @var CourseRepository $repository */
@@ -86,15 +86,45 @@ class CourseController extends AbstractController
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
-        $id  = $request->get("id");
+        $id = $request->get("id");
 
-        if($id == null) return ResponseHelper::missingParameterResponse("id");
+        if ($id == null) return ResponseHelper::missingParameterResponse("id");
 
         $entityManager = $doctrine->getManager();
         /** @var CourseRepository $repository */
 
         $repository = $entityManager->getRepository(Course::class);
         $course = $repository->find($id);
+
+        return new JsonResponse($course->toArray(), Response::HTTP_OK, [], false);;
+    }
+
+    #[Route('/api/v1/course/{id}', name: 'update_couse_by_id_v1', methods: ['PUT'])]
+    public function updateCourse(ManagerRegistry $doctrine, Request $request)
+    {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
+        $id = $request->get("id");
+        $newName = $request->get("name");
+        $newDescription = $request->get("description");
+        if ($id == null) return ResponseHelper::missingParameterResponse("id");
+
+        $entityManager = $doctrine->getManager();
+        /** @var CourseRepository $repository */
+
+        $repository = $entityManager->getRepository(Course::class);
+        $course = $repository->findOneBy(['id' => $id]);
+
+        if ($course == null) return new
+        JsonResponse(array('error' => "course does not exist"),
+            Response::HTTP_BAD_REQUEST, [], false);
+
+        if (!is_null($newName))
+            $course->setName($newName);
+        if (!is_null($newDescription))
+            $course->setDescription($newDescription);
+
+        $repository->save($course, true);
 
         return new JsonResponse($course->toArray(), Response::HTTP_OK, [], false);;
     }
