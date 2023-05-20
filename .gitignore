@@ -5,6 +5,8 @@
 /public/bundles/
 /var/
 /vendor/
+./bd/
+./migrations
 ###< symfony/framework-bundle ###
 .idea
 .env

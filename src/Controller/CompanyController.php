@@ -142,7 +142,7 @@ class CompanyController extends AbstractController
             throw new BadRequestHttpException();
 
         /** @var CompanyAddress $address */
-        $address = $repositoryAddress->findBy(['company' => $company->getId()]);
+        $address = $repositoryAddress->findOneBy(['company' => $company->getId()]);
         $newAddress = CompanyAddressMapper::fromRequestToAddress($request, $address);
 
         if ($newProfilePicture) {
