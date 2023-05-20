@@ -37,7 +37,8 @@ class RegisterController extends AbstractController
         $service->registerStudent(
             StudentMapper::fromRequest($request),
             LoginDTO::fromRequest($request),
-            $request->get("profile_picture")
+            $request->get("profile_picture"),
+            $request->get("course_id")
         );
         return $this->json([], Response::HTTP_CREATED);
     }

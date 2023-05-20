@@ -7,6 +7,7 @@ use App\DTO\LoginDTO;
 use App\Entity\AccessToken;
 use App\Entity\Administrator;
 use App\Entity\CompanyAddress;
+use App\Entity\Course;
 use App\Entity\MasterAdminCreationInvite;
 use App\Entity\Company;
 use App\Entity\Login;
@@ -16,6 +17,7 @@ use App\Repository\AdministratorRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use stdClass;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -41,7 +43,7 @@ class AuthService
                                 StudentService              $studentService,
                                 AdminService                $adminService,
                                 CompanyService              $companyService,
-                                PictureHelper $profilePictureHelper
+                                PictureHelper               $profilePictureHelper
     )
     {
         $this->doctrine = $doctrine;
@@ -151,8 +153,16 @@ class AuthService
     public function registerStudent(Student  $student,
                                     LoginDTO $dto,
                                     ?string  $profileImage,
+                                    ?string  $courseId,
                                     int      $type = LoginType::STUDENT): void
     {
+        /** @var Course $course */
+        if (!is_null($courseId))
+            $course = $this->doctrine->getRepository(Course::class)->find($courseId);
+
+        if ($course)
+            $student->setCourse($course);
+
         $login = $this->createLogin(
             $dto->getEmail(),
             $dto->getPassword(),
