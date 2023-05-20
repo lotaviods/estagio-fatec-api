@@ -39,7 +39,7 @@ class CompanyAddress
     private string $state;
 
     #[Column(name: "country", type: "string", length: 255, nullable: true, options: ["fixed" => true])]
-    private string $country;
+    private ?string $country;
 
     #[Column(name: "latitude", type: "float", nullable: true)]
     private ?string $latitude = null;
@@ -167,9 +167,6 @@ class CompanyAddress
         return $this->state;
     }
 
-    /**
-     * @param string $state
-     */
     public function setState(string $state): void
     {
         $this->state = $state;
@@ -183,10 +180,7 @@ class CompanyAddress
         return $this->country;
     }
 
-    /**
-     * @param string $country
-     */
-    public function setCountry(string $country): void
+    public function setCountry(?string $country): void
     {
         $this->country = $country;
     }
@@ -199,10 +193,7 @@ class CompanyAddress
         return $this->latitude;
     }
 
-    /**
-     * @param string $latitude
-     */
-    public function setLatitude(string $latitude): void
+    public function setLatitude(?string $latitude): void
     {
         $this->latitude = $latitude;
     }
@@ -215,10 +206,7 @@ class CompanyAddress
         return $this->longitude;
     }
 
-    /**
-     * @param string $longitude
-     */
-    public function setLongitude(string $longitude): void
+    public function setLongitude(?string $longitude): void
     {
         $this->longitude = $longitude;
     }

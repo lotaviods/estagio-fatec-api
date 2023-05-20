@@ -2,10 +2,18 @@
 
 namespace App\Controller;
 
+use App\Constraints\CompanyAddressConstraints;
+use App\Constraints\CompanyConstraints;
+use App\DTO\LoginDTO;
 use App\Entity\Company;
+use App\Entity\CompanyAddress;
+use App\Form\Company\CompanyAddressForm;
 use App\Helper\ProfilePictureHelper;
 use App\Helper\ResponseHelper;
+use App\Mapper\CompanyAddressMapper;
+use App\Mapper\CompanyMapper;
 use App\Repository\CompanyRepository;
+use App\Service\AuthService;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -15,6 +23,8 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class CompanyController extends AbstractController
 {
@@ -23,13 +33,21 @@ class CompanyController extends AbstractController
 
     private UserProviderInterface $userProvider;
 
+    private ValidatorInterface $validator;
+
+    private TranslatorInterface $translator;
+
     public function __construct(ProfilePictureHelper        $profilePictureHelper,
                                 UserPasswordHasherInterface $passwordHasher,
-                                UserProviderInterface       $userProvider)
+                                UserProviderInterface       $userProvider,
+                                ValidatorInterface          $validator,
+                                TranslatorInterface         $translator)
     {
         $this->profilePictureHelper = $profilePictureHelper;
         $this->passwordHasher = $passwordHasher;
         $this->userProvider = $userProvider;
+        $this->validator = $validator;
+        $this->translator = $translator;
     }
 
     #[Route('/api/v1/company', name: 'company_v1', methods: ['GET'])]
@@ -145,11 +163,46 @@ class CompanyController extends AbstractController
         if ($newName) {
             $login?->setName($newName);
         }
-        
+
         $manager->persist($login);
         $manager->persist($company);
         $manager->flush();
 
         return new JsonResponse([], Response::HTTP_OK, [], false);;
+    }
+
+    #[Route('api/v1/register/company', name: 'companyRegister_v1', methods: ['POST'])]
+    public function companyRegister(Request $request, AuthService $service): JsonResponse
+    {
+        $data = $request->request->all();
+
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
+        $constraints = CompanyConstraints::getConstraints($this->translator);
+        $constraintsAddress = CompanyAddressConstraints::getConstraints($this->translator);
+
+        $companyViolations = $this->validator->validate($data, $constraints);
+        $addressViolations = $this->validator->validate($data, $constraintsAddress);
+
+        if (count($companyViolations) > 0 || count($addressViolations) > 0) {
+            $errors = [];
+            foreach ($companyViolations as $v) {
+                $errors[] = str_replace("\"", "", $v->getMessage());
+            }
+            foreach ($addressViolations as $v) {
+                $errors[] = str_replace("\"", "", $v->getMessage());
+            }
+            return new JsonResponse([$this->translator->trans('errors') => $errors], Response::HTTP_BAD_REQUEST);
+
+        }
+
+        $service->registerCompany(
+            loginDTO: LoginDTO::fromRequest($request),
+            company: CompanyMapper::fromRequest(),
+            companyAddress: CompanyAddressMapper::fromRequest($request),
+            profileImage: $request->get("profile_picture")
+        );
+
+        return $this->json([], Response::HTTP_CREATED);
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Constraints;
 
 use Symfony\Component\Validator\Constraints\Collection;
+use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Required;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -26,12 +27,9 @@ class CompanyConstraints
                 new NotBlank([
                     'message' => $translator->trans('company_email_empty_field'),
                 ]),
+                new Email()
             ],
-            'profile_picture' => [
-                new NotBlank([
-                    'message' => $translator->trans('company_profile_picture_empty_field'),
-                ])
-            ],
+            'profile_picture' => [],
         ], allowExtraFields: true, allowMissingFields: false, missingFieldsMessage: $translator->trans("field_are_missing"));
     }
 

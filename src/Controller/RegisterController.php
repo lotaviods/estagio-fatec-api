@@ -67,44 +67,4 @@ class RegisterController extends AbstractController
 
         return $this->json([], Response::HTTP_CREATED);
     }
-
-    #[Route('api/v1/register/company', name: 'companyRegister_v1', methods: ['POST'])]
-    public function companyRegister(Request $request, AuthService $service): JsonResponse
-    {
-        $data = $request->request->all();
-
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
-        $formAddress = $this->createForm(CompanyAddressForm::class, new CompanyAddress());
-        $constraints = CompanyConstraints::getConstraints($this->translator);
-        //TODO: Remove form and set constraints.
-        $formAddress->submit($data);
-
-        $violations = $this->validator->validate($request->request->all(), $constraints);
-        if (count($violations) > 0) {
-            $errors = [];
-            foreach ($violations as $v) {
-                $errors[] = str_replace("\"", "", $v->getMessage());
-            }
-            return new JsonResponse([$this->translator->trans('errors') => $errors], Response::HTTP_BAD_REQUEST);
-
-        }
-
-        if (!$formAddress->isValid()) {
-            $errors = [];
-            foreach ($formAddress->getErrors(true) as $error) {
-                $errors[] = $error->getMessage();
-            }
-
-            return new JsonResponse([$this->translator->trans('errors') => $errors], Response::HTTP_BAD_REQUEST);
-        }
-
-        $service->registerCompany(
-            loginDTO: LoginDTO::fromRequest($request),
-            company: CompanyMapper::fromRequest(),
-            companyAddress: $formAddress->getData(),
-            profileImage: $request->get("profile_picture")
-        );
-
-        return $this->json([], Response::HTTP_CREATED);
-    }
 }
