@@ -210,4 +210,12 @@ class JobOffer
     {
         return $this->promotionalImageUrl;
     }
+
+    /**
+     * @return Collection
+     */
+    public function getSubscribedStudents(): Collection
+    {
+        return $this->subscribedStudents;
+    }
 }

@@ -215,7 +215,7 @@ class JobOfferController extends AbstractController
     }
 
     #[Route('/api/v1/job-offers/{student_id}', name: 'applied-jobs_v1')]
-    public function getAvailableJobsFromStudent(ManagerRegistry $doctrine, Request $request): Response
+    public function getAppliedJobsFromStudent(ManagerRegistry $doctrine, Request $request): Response
     {
         $studentId = $request->get("student_id");
         $entityManager = $doctrine->getManager();
@@ -243,6 +243,29 @@ class JobOfferController extends AbstractController
         }
 
         return new JsonResponse($jobsArray, Response::HTTP_OK, [], false);;
+    }
+
+    #[Route('/api/v1/job-offers/{job_id}/application', name: 'applications-job_v1')]
+    public function getJobApplicationsFromId(ManagerRegistry $doctrine, Request $request): Response
+    {
+        $jobId = $request->get("job_id");
+        $entityManager = $doctrine->getManager();
+
+        /** @var JobOfferRepository $repository */
+        $repository = $entityManager->getRepository(JobOffer::class);
+
+        $job = $repository->find($jobId);
+        if (!$job) return new JsonResponse([], Response::HTTP_BAD_REQUEST, [], false);
+
+        $students = $job->getSubscribedStudents();
+        $studentArray = [];
+
+        /** @var Student $student */
+        foreach ($students as $student) {
+            $studentArray[] = $student->toArray();
+        }
+
+        return new JsonResponse($studentArray, Response::HTTP_OK, [], false);;
     }
 
     #[Route('/api/v1/job-offer', name: 'job-offer-delete_v1', methods: ['DELETE'])]
