@@ -268,6 +268,22 @@ class JobOfferController extends AbstractController
         return new JsonResponse($studentArray, Response::HTTP_OK, [], false);;
     }
 
+    #[Route('/api/v1/job-offer', name: 'get_job_by_v1')]
+    public function getJobFromId(ManagerRegistry $doctrine, Request $request): Response
+    {
+        $id = $request->get("id");
+
+        if ($id == null) return ResponseHelper::missingParameterResponse("id");
+
+        $entityManager = $doctrine->getManager();
+        /** @var JobOfferRepository $repository */
+
+        $repository = $entityManager->getRepository(JobOffer::class);
+        $job = $repository->find($id);
+
+        return new JsonResponse($job->toArray(), Response::HTTP_OK, [], false);;
+    }
+
     #[Route('/api/v1/job-offer', name: 'job-offer-delete_v1', methods: ['DELETE'])]
     public function deleteJobOffer(ManagerRegistry $doctrine, Request $request): Response
     {
