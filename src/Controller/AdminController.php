@@ -3,7 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Administrator;
-use App\Helper\ProfilePictureHelper;
+use App\Helper\PictureHelper;
 use App\Helper\ResponseHelper;
 use App\Repository\AdministratorRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -19,7 +19,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class AdminController extends AbstractController
 {
-    private ProfilePictureHelper $profilePictureHelper;
+    private PictureHelper $profilePictureHelper;
     private UserPasswordHasherInterface $passwordHasher;
 
     private UserProviderInterface $userProvider;
@@ -28,7 +28,7 @@ class AdminController extends AbstractController
 
     private TranslatorInterface $translator;
 
-    public function __construct(ProfilePictureHelper        $profilePictureHelper,
+    public function __construct(PictureHelper               $profilePictureHelper,
                                 UserPasswordHasherInterface $passwordHasher,
                                 UserProviderInterface       $userProvider,
                                 ValidatorInterface          $validator,
@@ -58,7 +58,7 @@ class AdminController extends AbstractController
         /** @var Administrator $admin */
         foreach ($admins as $admin) {
             $currentAdmin = $admin->toArray();
-            $currentAdmin["profile_picture"] = $this->profilePictureHelper->getFullProfileUrl($admin->getLogin()?->getProfilePicture());
+            $currentAdmin["profile_picture"] = $this->profilePictureHelper->getFullUrl($admin->getLogin()?->getProfilePicture());
             $adminArray[] = $currentAdmin;
         }
 

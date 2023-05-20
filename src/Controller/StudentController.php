@@ -6,7 +6,7 @@ use App\Entity\Company;
 use App\Entity\Course;
 use App\Entity\JobOffer;
 use App\Entity\Student;
-use App\Helper\ProfilePictureHelper;
+use App\Helper\PictureHelper;
 use App\Repository\JobOfferRepository;
 use App\Repository\StudentRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -26,7 +26,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class StudentController extends AbstractController
 {
-    private ProfilePictureHelper $profilePictureHelper;
+    private PictureHelper $profilePictureHelper;
     private UserProviderInterface $userProvider;
 
     private UserPasswordHasherInterface $passwordHasher;
@@ -34,7 +34,7 @@ class StudentController extends AbstractController
     private TranslatorInterface $translator;
 
     public function __construct(
-        ProfilePictureHelper        $profilePictureHelper,
+        PictureHelper               $profilePictureHelper,
         UserProviderInterface       $userProvider,
         TranslatorInterface         $translator,
         UserPasswordHasherInterface $passwordHasher
@@ -196,7 +196,7 @@ class StudentController extends AbstractController
         $student = $student->toArray();
 
         $profilePicture = $student["profile_picture"];
-        $student["profile_picture"] = $this->profilePictureHelper->getFullProfileUrl($profilePicture);
+        $student["profile_picture"] = $this->profilePictureHelper->getFullUrl($profilePicture);
 
         return new JsonResponse($student, Response::HTTP_OK, [], false);;
     }

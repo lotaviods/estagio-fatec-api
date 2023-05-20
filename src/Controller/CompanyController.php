@@ -8,7 +8,7 @@ use App\DTO\LoginDTO;
 use App\Entity\Company;
 use App\Entity\CompanyAddress;
 use App\Form\Company\CompanyAddressForm;
-use App\Helper\ProfilePictureHelper;
+use App\Helper\PictureHelper;
 use App\Helper\ResponseHelper;
 use App\Mapper\CompanyAddressMapper;
 use App\Mapper\CompanyMapper;
@@ -28,7 +28,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class CompanyController extends AbstractController
 {
-    private ProfilePictureHelper $profilePictureHelper;
+    private PictureHelper $pictureHelper;
     private UserPasswordHasherInterface $passwordHasher;
 
     private UserProviderInterface $userProvider;
@@ -37,13 +37,13 @@ class CompanyController extends AbstractController
 
     private TranslatorInterface $translator;
 
-    public function __construct(ProfilePictureHelper        $profilePictureHelper,
+    public function __construct(PictureHelper               $profilePictureHelper,
                                 UserPasswordHasherInterface $passwordHasher,
                                 UserProviderInterface       $userProvider,
                                 ValidatorInterface          $validator,
                                 TranslatorInterface         $translator)
     {
-        $this->profilePictureHelper = $profilePictureHelper;
+        $this->pictureHelper = $profilePictureHelper;
         $this->passwordHasher = $passwordHasher;
         $this->userProvider = $userProvider;
         $this->validator = $validator;
@@ -87,7 +87,7 @@ class CompanyController extends AbstractController
         $company = $repository->find($id);
 
         $array = $company->toArray();
-        $array["profile_picture"] = $this->profilePictureHelper->getFullProfileUrl($company->getProfilePicture());
+        $array["profile_picture"] = $this->pictureHelper->getFullUrl($company->getProfilePicture());
 
         return new JsonResponse($array, Response::HTTP_OK, [], false);
     }
@@ -146,7 +146,7 @@ class CompanyController extends AbstractController
         $newAddress = CompanyAddressMapper::fromRequestToAddress($request, $address);
 
         if ($newProfilePicture) {
-            $path = $this->profilePictureHelper->saveImageBase64($newProfilePicture);
+            $path = $this->pictureHelper->saveImageBase64($newProfilePicture);
             if ($path)
                 $company->setProfilePicture($path);
         }

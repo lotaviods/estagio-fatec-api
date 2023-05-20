@@ -3,7 +3,7 @@
 
 namespace App\Entity;
 
-use App\Helper\ProfilePictureHelper;
+use App\Helper\PictureHelper;
 use App\Repository\StudentRepository;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;

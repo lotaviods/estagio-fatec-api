@@ -6,11 +6,13 @@ use App\Entity\Company;
 use App\Entity\Course;
 use App\Entity\JobOffer;
 use App\Entity\Student;
-use App\Helper\ProfilePictureHelper;
+use App\Helper\PictureHelper;
+use App\Repository\CompanyRepository;
 use App\Repository\JobOfferRepository;
 use App\Repository\StudentRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,11 +24,11 @@ use Symfony\Component\Serializer\Encoder\JsonEncoder;
 
 class JobOfferController extends AbstractController
 {
-    private ProfilePictureHelper $profilePictureHelper;
+    private PictureHelper $pictureHelper;
 
-    public function __construct(ProfilePictureHelper $profilePictureHelper)
+    public function __construct(PictureHelper $profilePictureHelper)
     {
-        $this->profilePictureHelper = $profilePictureHelper;
+        $this->pictureHelper = $profilePictureHelper;
     }
 
     #[Route('/api/v1/job-offers/available', name: 'jobs_available_v1')]
@@ -41,9 +43,9 @@ class JobOfferController extends AbstractController
             if ($job->isActive()) {
                 $currentJob = $job->toArray();
                 /** @var JobOffer $job */
-                $currentJob["company_profile_picture"] = $job->getCompany()?->getLogin()?->getProfilePictureUrl($this->profilePictureHelper);
+                $currentJob["company_profile_picture"] = $job->getCompany()?->getLogin()?->getProfilePictureUrl($this->pictureHelper);
                 if ($currentJob["promotional_image_url"]) {
-                    $currentJob["promotional_image_url"] = $this->profilePictureHelper->getFullProfileUrl($currentJob["promotional_image_url"]);
+                    $currentJob["promotional_image_url"] = $this->pictureHelper->getFullUrl($currentJob["promotional_image_url"]);
                 }
                 $jobsArray[] = $currentJob;
             }
@@ -129,7 +131,7 @@ class JobOfferController extends AbstractController
         $job->setRole($role);
 
         if ($prom_image) {
-            $path = $this->profilePictureHelper->saveImageBase64($prom_image, "promo-job-images");
+            $path = $this->pictureHelper->saveImageBase64($prom_image, "promo-job-images");
             if ($path)
                 $job->setPromotionalUrl($path);
         }
@@ -148,11 +150,39 @@ class JobOfferController extends AbstractController
         $jobsArray = [];
 
         foreach ($jobsResult as $job) {
+            /** @var JobOffer $job */
             $currentJob = $job->toArray();
             /** @var JobOffer $job */
-            $currentJob["company_profile_picture"] = $job->getCompany()?->getLogin()?->getProfilePictureUrl($this->profilePictureHelper);
+            $currentJob["company_profile_picture"] = $job->getCompany()?->getLogin()?->getProfilePictureUrl($this->pictureHelper);
+            $currentJob["promotional_image_url"] = $this->pictureHelper->getFullUrl($job->getPromotionalImageUrl());
+
+            $jobsArray[] = $currentJob;
+        }
+
+        return new JsonResponse($jobsArray, Response::HTTP_OK, [], false);;
+    }
+
+    /**
+     *
+     *  If user is a company user gives only jobs for this company else
+     * gives all jobs.
+     */
+    #[Route('/api/v1/user/job-offers', name: 'job-offers-from-user_v1')]
+    public function getAllJobsFromUser(ManagerRegistry $doctrine): Response
+    {
+        $entityManager = $doctrine->getManager();
+        /** @var JobOfferRepository $repository */
+        $repository = $entityManager->getRepository(JobOffer::class);
+
+        $jobsResult = $this->getJobsByLogin($this->getUser(), $repository);
+        $jobsArray = [];
+
+        foreach ($jobsResult as $job) {
+            $currentJob = $job->toArray();
+            /** @var JobOffer $job */
+            $currentJob["company_profile_picture"] = $job->getCompany()?->getLogin()?->getProfilePictureUrl($this->pictureHelper);
             if ($currentJob["promotional_image_url"]) {
-                $currentJob["promotional_image_url"] = $this->profilePictureHelper->getFullProfileUrl($currentJob["promotional_image_url"]);
+                $currentJob["promotional_image_url"] = $this->pictureHelper->getFullUrl($currentJob["promotional_image_url"]);
             }
             $jobsArray[] = $currentJob;
         }
@@ -173,9 +203,9 @@ class JobOfferController extends AbstractController
             if ($job->isActive() && $job->getTargetCourse()->getId() == $couseId) {
                 $currentJob = $job->toArray();
                 /** @var JobOffer $job */
-                $currentJob["company_profile_picture"] = $job->getCompany()?->getLogin()?->getProfilePictureUrl($this->profilePictureHelper);
+                $currentJob["company_profile_picture"] = $job->getCompany()?->getLogin()?->getProfilePictureUrl($this->pictureHelper);
                 if ($job->getPromotionalImageUrl()) {
-                    $currentJob["promotional_image_url"] = $this->profilePictureHelper->getFullProfileUrl($currentJob["promotional_image_url"]);
+                    $currentJob["promotional_image_url"] = $this->pictureHelper->getFullUrl($currentJob["promotional_image_url"]);
                 }
                 $jobsArray[] = $currentJob;
             }
@@ -204,9 +234,9 @@ class JobOfferController extends AbstractController
             if ($job->isActive()) {
                 $currentJob = $job->toArray();
                 /** @var JobOffer $job */
-                $currentJob["company_profile_picture"] = $job->getCompany()?->getLogin()?->getProfilePictureUrl($this->profilePictureHelper);
+                $currentJob["company_profile_picture"] = $job->getCompany()?->getLogin()?->getProfilePictureUrl($this->pictureHelper);
                 if ($currentJob["promotional_image_url"]) {
-                    $currentJob["promotional_image_url"] = $this->profilePictureHelper->getFullProfileUrl($currentJob["promotional_image_url"]);
+                    $currentJob["promotional_image_url"] = $this->pictureHelper->getFullUrl($currentJob["promotional_image_url"]);
                 }
                 $jobsArray[] = $currentJob;
             }
@@ -233,5 +263,17 @@ class JobOfferController extends AbstractController
         $repository->remove($jobOffer, true);
 
         return new JsonResponse(array(), Response::HTTP_OK, [], false);
+    }
+
+    private function getJobsByLogin(?UserInterface $user)
+    {
+        $userRoles = $user->getRoles();
+        if (in_array('ROLE_COMPANY', $userRoles)) {
+            /** @var CompanyRepository $companyRepo */
+            $companyRepo = $entityManager->getRepository(Company::class);
+            $company = $companyRepo->findOneBy(['login' => $this->getUser()->getUserIdentifier()]);
+            return $repository->findBy(['company' => $company->getId()]);
+        }
+        return $repository->findAll();
     }
 }

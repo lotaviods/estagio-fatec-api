@@ -11,7 +11,7 @@ use App\Entity\MasterAdminCreationInvite;
 use App\Entity\Company;
 use App\Entity\Login;
 use App\Entity\Student;
-use App\Helper\ProfilePictureHelper;
+use App\Helper\PictureHelper;
 use App\Repository\AdministratorRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Exception;
@@ -33,7 +33,7 @@ class AuthService
 
     private CompanyService $companyService;
 
-    private ProfilePictureHelper $profilePictureHelper;
+    private PictureHelper $profilePictureHelper;
 
     public function __construct(ManagerRegistry             $doctrine,
                                 UserPasswordHasherInterface $passwordHasher,
@@ -41,7 +41,7 @@ class AuthService
                                 StudentService              $studentService,
                                 AdminService                $adminService,
                                 CompanyService              $companyService,
-                                ProfilePictureHelper        $profilePictureHelper
+                                PictureHelper $profilePictureHelper
     )
     {
         $this->doctrine = $doctrine;
@@ -75,7 +75,7 @@ class AuthService
     {
         $data = [
             "login_type" => $user->getType(),
-            "profile_picture" => $this->profilePictureHelper->getFullProfileUrl($user->getProfilePicture())
+            "profile_picture" => $this->profilePictureHelper->getFullUrl($user->getProfilePicture())
         ];
 
         if ($user->getType() == LoginType::STUDENT) {

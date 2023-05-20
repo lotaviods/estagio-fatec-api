@@ -4,7 +4,7 @@ namespace App\Helper;
 
 use App\Service\MinioService;
 
-class ProfilePictureHelper
+class PictureHelper
 {
     private MinioService $minioService;
 
@@ -13,7 +13,7 @@ class ProfilePictureHelper
         $this->minioService = $minioService;
     }
 
-    public function getFullProfileUrl(?string $profileUri): ?string
+    public function getFullUrl(?string $profileUri): ?string
     {
         if (!$profileUri) return null;
         return "{$this->minioService->getEndpoint()}$profileUri";
