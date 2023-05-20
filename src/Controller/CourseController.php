@@ -99,7 +99,7 @@ class CourseController extends AbstractController
         return new JsonResponse($course->toArray(), Response::HTTP_OK, [], false);;
     }
 
-    #[Route('/api/v1/course/{id}', name: 'update_couse_by_id_v1', methods: ['PUT'])]
+    #[Route('/api/v1/course', name: 'update_couse_by_id_v1', methods: ['PUT'])]
     public function updateCourse(ManagerRegistry $doctrine, Request $request)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
