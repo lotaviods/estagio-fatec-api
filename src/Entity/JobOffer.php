@@ -151,6 +151,7 @@ class JobOffer
 
         if ($this->targetCourse != null) {
             $newArray += ["target_course" => $this->targetCourse->getName()];
+            $newArray += ["target_course_id" => $this->targetCourse->getId()];
         }
 
         $studentLikeIdArray = [];
