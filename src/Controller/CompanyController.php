@@ -122,7 +122,7 @@ class CompanyController extends AbstractController
 
         $id = $request->get("id");
         $isActive = $request->get("is_active");
-        $newName = $request->get("name");
+        $newName = $request->get("full_name");
         $newEmail = $request->get("email");
         $newPassword = $request->get("password");
         $newProfilePicture = $request->get("profile_picture");

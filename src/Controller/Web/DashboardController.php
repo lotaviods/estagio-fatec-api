@@ -15,6 +15,7 @@ class DashboardController extends AbstractController
                               ManagerRegistry $doctrine
     ): JsonResponse
     {
+
         return new JsonResponse([]);
     }
 }
