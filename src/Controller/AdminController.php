@@ -55,8 +55,11 @@ class AdminController extends AbstractController
         $admins = $repository->findAll();
         $adminArray = [];
 
+        /** @var Administrator $admin */
         foreach ($admins as $admin) {
-            $adminArray[] = $admin->toArray();
+            $currentAdmin = $admin->toArray();
+            $currentAdmin["profile_picture"] = $this->profilePictureHelper->getFullProfileUrl($admin->getLogin()?->getProfilePicture());
+            $adminArray[] = $currentAdmin;
         }
 
         return new JsonResponse($adminArray, Response::HTTP_OK, [], false);

@@ -27,7 +27,7 @@ class CourseController extends AbstractController
 
         $coursesResult = $repository->findAll();
         $courseArray = [];
-
+        /** @var Course $course */
         foreach ($coursesResult as $course) {
             $courseArray[] = $course->toArray();
         }
