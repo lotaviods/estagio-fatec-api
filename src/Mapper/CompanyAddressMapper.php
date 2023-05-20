@@ -23,4 +23,58 @@ class CompanyAddressMapper
 
         return $companyAddress;
     }
+
+    public static function fromRequestToAddress(Request $request, CompanyAddress $address): CompanyAddress
+    {
+        $newStreet = $request->get("street");
+        $newNumber = $request->get("number");
+        $newNeighborhood = $request->get("neighborhood");
+        $newComplement = $request->get("complement");
+        $newZipCode = $request->get("zip_code");
+        $newCity = $request->get("city");
+        $newCountry = $request->get("country");
+        $newState = $request->get("state");
+        $newLatitude = $request->get("latitude");
+        $newLongitude = $request->get("longitude");
+
+        if ($newStreet) {
+            $address->setStreet($newStreet);
+        }
+
+        if ($newNumber) {
+            $address->setNumber($newNumber);
+        }
+
+        if ($newNeighborhood) {
+            $address->setNeighborhood($newNeighborhood);
+        }
+
+        if ($newComplement) {
+            $address->setComplement($newComplement);
+        }
+
+        if ($newZipCode) {
+            $address->setZipCode($newZipCode);
+        }
+
+        if ($newCity) {
+            $address->setCity($newCity);
+        }
+
+        if ($newCountry) {
+            $address->setCountry($newCountry);
+        }
+
+        if ($newState) {
+            $address->setState($newState);
+        }
+
+        if ($newLatitude) {
+            $address->setLatitude($newLatitude);
+        }
+        if($newLongitude) {
+            $address->setLongitude($newLongitude);
+        }
+        return $address;
+    }
 }

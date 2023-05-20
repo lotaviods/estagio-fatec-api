@@ -127,17 +127,23 @@ class CompanyController extends AbstractController
         $newPassword = $request->get("password");
         $newProfilePicture = $request->get("profile_picture");
 
+
         if ($id == null) return ResponseHelper::missingParameterResponse("id");
 
 
         /** @var CompanyRepository $repository */
         $repository = $doctrine->getRepository(Company::class);
+        $repositoryAddress = $doctrine->getRepository(CompanyAddress::class);
 
         /** @var Company $company */
         $company = $repository->find($id);
 
         if (!$company)
             throw new BadRequestHttpException();
+
+        /** @var CompanyAddress $address */
+        $address = $repositoryAddress->findBy(['company' => $company->getId()]);
+        $newAddress = CompanyAddressMapper::fromRequestToAddress($request, $address);
 
         if ($newProfilePicture) {
             $path = $this->profilePictureHelper->saveImageBase64($newProfilePicture);
@@ -164,8 +170,10 @@ class CompanyController extends AbstractController
             $login?->setName($newName);
         }
 
+
         $manager->persist($login);
         $manager->persist($company);
+        $manager->persist($newAddress);
         $manager->flush();
 
         return new JsonResponse([], Response::HTTP_OK, [], false);;
