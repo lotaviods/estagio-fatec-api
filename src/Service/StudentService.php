@@ -86,7 +86,8 @@ class StudentService
             "ra" => $student->getRa(),
             "full_name" => $student->getName(),
             "profile_picture" => $this->minioS3Helper->getFullUrl($student->getLogin()?->getProfilePicture()),
-            "resume" => $this->minioS3Helper->getFullUrl($student->getResume()?->getUri())
+            "resume" => $this->minioS3Helper->getFullUrl($student->getResume()?->getUri()),
+            "email" => $student->getLogin()?->getEmail()
         ];
     }
 
