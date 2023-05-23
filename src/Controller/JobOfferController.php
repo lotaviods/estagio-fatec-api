@@ -253,10 +253,10 @@ class JobOfferController extends AbstractController
     }
 
     #[Route('/api/v1/job-offer/{job_id}/application', name: 'applications-job_v1', methods: ['GET'])]
-    public function getJobApplicationsFromId(Request         $request,
+    public function getJobApplicationsFromId(Request             $request,
                                              TranslatorInterface $translator,
-                                             StudentService  $studentService,
-                                             JobOfferService $jobOfferService): Response
+                                             StudentService      $studentService,
+                                             JobOfferService     $jobOfferService): Response
     {
         $jobId = $request->get("job_id");
 
@@ -267,6 +267,64 @@ class JobOfferController extends AbstractController
         }
 
         return new JsonResponse($students, Response::HTTP_OK, [], false);;
+    }
+
+    #[Route('/api/v1/job-offer', name: 'job-update_v1', methods: ['PUT'])]
+    public function updateJobOffer(ManagerRegistry $doctrine,
+                                  Request         $request): Response
+    {
+        $id = $request->get("id");
+        if ($id == null) return ResponseHelper::missingParameterResponse("id");
+
+        $newCourseId = $request->get("course_id");
+        $newTitle = $request->get("title");
+        $newDescription = $request->get("email");
+        $newRole = $request->get("password");
+        $newExperience = $request->get("ra");
+        $newIsActive = $request->get("is_active");
+
+
+        /** @var JobOfferRepository $repository */
+        $repository = $doctrine->getRepository(JobOffer::class);
+
+        /** @var JobOffer $job */
+        $job = $repository->find($id);
+
+        if (is_null($job))
+            return ResponseHelper::entityNotFoundBadRequestResponse("job", $translator);
+
+        if ($newCourseId) {
+            /** @var Course $course */
+            $course = $doctrine->getRepository(Course::class)->find($newCourseId);
+
+            if (!$course) return ResponseHelper::entityNotFoundBadRequestResponse("course", $translator);
+            $job->setTargetCourse($course);
+        }
+
+        if (!is_null($newTitle)) {
+            $job->setTitle($newTitle);
+        }
+
+        if (!is_null($newDescription)) {
+            $job->setDescription($newDescription);
+        }
+
+        if (!is_null($newRole)) {
+            $job->setRole($newRole);
+        }
+
+        if (!is_null($newExperience)) {
+            $job->setJobExperience($newExperience);
+        }
+
+        if (!is_null($newIsActive)) {
+            $job->setIsActive($newIsActive);
+        }
+
+        $manager->persist($job);
+        $manager->flush();
+
+        return new JsonResponse([], Response::HTTP_OK, [], false);;
     }
 
     #[Route('/api/v1/job-offer', name: 'get_job_by_v1', methods: ['GET'])]

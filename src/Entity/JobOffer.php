@@ -235,4 +235,20 @@ class JobOffer
 
         return $this;
     }
+
+    /**
+     * @return bool
+     */
+    public function isIsActive(): bool
+    {
+        return $this->is_active;
+    }
+
+    /**
+     * @param bool $is_active
+     */
+    public function setIsActive(bool $is_active): void
+    {
+        $this->is_active = $is_active;
+    }
 }
