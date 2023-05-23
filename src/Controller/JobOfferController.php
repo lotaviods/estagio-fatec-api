@@ -95,7 +95,7 @@ class JobOfferController extends AbstractController
     {
         $companyId = $request->get("company_id");
         $jobDescription = $request->get("description");
-        $is_active = $request->get("is_active");
+        $is_active = $request->get("is_active") === "true";
         $title = $request->get("title");
         $targetCourse = $request->get("target_course_id");
         $jobExperience = $request->get("experience");
@@ -273,7 +273,7 @@ class JobOfferController extends AbstractController
 
     #[Route('/api/v1/job-offer', name: 'job-update_v1', methods: ['PUT'])]
     public function updateJobOffer(ManagerRegistry $doctrine,
-                                  Request         $request): Response
+                                   Request         $request): Response
     {
         $id = $request->get("id");
         if ($id == null) return ResponseHelper::missingParameterResponse("id");
@@ -283,7 +283,8 @@ class JobOfferController extends AbstractController
         $newDescription = $request->get("email");
         $newRole = $request->get("password");
         $newExperience = $request->get("ra");
-        $newIsActive = $request->get("is_active");
+        $newIsActive = $request->get("is_active") === "true";
+
 
 
         /** @var JobOfferRepository $repository */
