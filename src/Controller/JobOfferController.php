@@ -305,10 +305,11 @@ class JobOfferController extends AbstractController
             $job->setTargetCourse($course);
         }
 
-
-        $path = $this->minioS3Helper->saveImageBase64($newPromotionalImage, "promo-job-images");
-        if ($path)
-            $job->setPromotionalUrl($path);
+        if(!is_null($newPromotionalImage)){
+            $path = $this->minioS3Helper->saveImageBase64($newPromotionalImage, "promo-job-images");
+            if ($path)
+                $job->setPromotionalUrl($path);
+        }
 
         if(is_null($newPromotionalImage))
             $job->setPromotionalUrl(null);
