@@ -29,11 +29,11 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class JobOfferController extends AbstractController
 {
-    private MinioS3Helper $pictureHelper;
+    private MinioS3Helper $minioS3Helper;
 
     public function __construct(MinioS3Helper $profilePictureHelper)
     {
-        $this->pictureHelper = $profilePictureHelper;
+        $this->minioS3Helper = $profilePictureHelper;
     }
 
     #[Route('/api/v1/job-offers/available', name: 'jobs_available_v1', methods: ['GET'])]
@@ -48,9 +48,9 @@ class JobOfferController extends AbstractController
             if ($job->isActive()) {
                 $currentJob = $job->toArray();
                 /** @var JobOffer $job */
-                $currentJob["company_profile_picture"] = $job->getCompany()?->getLogin()?->getProfilePictureUrl($this->pictureHelper);
+                $currentJob["company_profile_picture"] = $job->getCompany()?->getLogin()?->getProfilePictureUrl($this->minioS3Helper);
                 if ($currentJob["promotional_image_url"]) {
-                    $currentJob["promotional_image_url"] = $this->pictureHelper->getFullUrl($currentJob["promotional_image_url"]);
+                    $currentJob["promotional_image_url"] = $this->minioS3Helper->getFullUrl($currentJob["promotional_image_url"]);
                 }
                 $jobsArray[] = $currentJob;
             }
@@ -140,7 +140,7 @@ class JobOfferController extends AbstractController
         $job->setIsActive($is_active ?: true);
 
         if ($prom_image) {
-            $path = $this->pictureHelper->saveImageBase64($prom_image, "promo-job-images");
+            $path = $this->minioS3Helper->saveImageBase64($prom_image, "promo-job-images");
             if ($path)
                 $job->setPromotionalUrl($path);
         }
@@ -162,8 +162,8 @@ class JobOfferController extends AbstractController
             /** @var JobOffer $job */
             $currentJob = $job->toArray();
             /** @var JobOffer $job */
-            $currentJob["company_profile_picture"] = $job->getCompany()?->getLogin()?->getProfilePictureUrl($this->pictureHelper);
-            $currentJob["promotional_image_url"] = $this->pictureHelper->getFullUrl($job->getPromotionalImageUrl());
+            $currentJob["company_profile_picture"] = $job->getCompany()?->getLogin()?->getProfilePictureUrl($this->minioS3Helper);
+            $currentJob["promotional_image_url"] = $this->minioS3Helper->getFullUrl($job->getPromotionalImageUrl());
 
             $jobsArray[] = $currentJob;
         }
@@ -189,9 +189,9 @@ class JobOfferController extends AbstractController
         foreach ($jobsResult as $job) {
             $currentJob = $job->toArray();
             /** @var JobOffer $job */
-            $currentJob["company_profile_picture"] = $job->getCompany()?->getLogin()?->getProfilePictureUrl($this->pictureHelper);
+            $currentJob["company_profile_picture"] = $job->getCompany()?->getLogin()?->getProfilePictureUrl($this->minioS3Helper);
             if ($currentJob["promotional_image_url"]) {
-                $currentJob["promotional_image_url"] = $this->pictureHelper->getFullUrl($currentJob["promotional_image_url"]);
+                $currentJob["promotional_image_url"] = $this->minioS3Helper->getFullUrl($currentJob["promotional_image_url"]);
             }
             $jobsArray[] = $currentJob;
         }
@@ -212,9 +212,9 @@ class JobOfferController extends AbstractController
             if ($job->isActive() && $job->getTargetCourse()->getId() == $couseId) {
                 $currentJob = $job->toArray();
                 /** @var JobOffer $job */
-                $currentJob["company_profile_picture"] = $job->getCompany()?->getLogin()?->getProfilePictureUrl($this->pictureHelper);
+                $currentJob["company_profile_picture"] = $job->getCompany()?->getLogin()?->getProfilePictureUrl($this->minioS3Helper);
                 if ($job->getPromotionalImageUrl()) {
-                    $currentJob["promotional_image_url"] = $this->pictureHelper->getFullUrl($currentJob["promotional_image_url"]);
+                    $currentJob["promotional_image_url"] = $this->minioS3Helper->getFullUrl($currentJob["promotional_image_url"]);
                 }
                 $jobsArray[] = $currentJob;
             }
@@ -243,9 +243,9 @@ class JobOfferController extends AbstractController
             if ($job->isActive()) {
                 $currentJob = $job->toArray();
                 /** @var JobOffer $job */
-                $currentJob["company_profile_picture"] = $job->getCompany()?->getLogin()?->getProfilePictureUrl($this->pictureHelper);
+                $currentJob["company_profile_picture"] = $job->getCompany()?->getLogin()?->getProfilePictureUrl($this->minioS3Helper);
                 if ($currentJob["promotional_image_url"]) {
-                    $currentJob["promotional_image_url"] = $this->pictureHelper->getFullUrl($currentJob["promotional_image_url"]);
+                    $currentJob["promotional_image_url"] = $this->minioS3Helper->getFullUrl($currentJob["promotional_image_url"]);
                 }
                 $jobsArray[] = $currentJob;
             }
@@ -342,10 +342,13 @@ class JobOfferController extends AbstractController
 
         $repository = $entityManager->getRepository(JobOffer::class);
         $job = $repository->find($id);
+        if (!$job) return ResponseHelper::entityNotFoundBadRequestResponse("job", $translator);
 
-        if (!$job) return new JsonResponse([], Response::HTTP_BAD_REQUEST, [], false);
+        $currentJob = $job->toArray();
+        $currentJob["company_profile_picture"] = $job->getCompany()?->getLogin()?->getProfilePictureUrl($this->minioS3Helper);
+        $currentJob["promotional_image_url"] = $this->minioS3Helper->getFullUrl($job->getPromotionalImageUrl());
 
-        return new JsonResponse($job->toArray(), Response::HTTP_OK, [], false);;
+        return new JsonResponse($currentJob, Response::HTTP_OK, [], false);;
     }
 
     #[Route('/api/v1/job-offer', name: 'job-offer-delete_v1', methods: ['DELETE'])]
