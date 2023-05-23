@@ -3,7 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Administrator;
-use App\Helper\PictureHelper;
+use App\Helper\MinioS3Helper;
 use App\Helper\ResponseHelper;
 use App\Repository\AdministratorRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -19,7 +19,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class AdminController extends AbstractController
 {
-    private PictureHelper $profilePictureHelper;
+    private MinioS3Helper $profilePictureHelper;
     private UserPasswordHasherInterface $passwordHasher;
 
     private UserProviderInterface $userProvider;
@@ -28,7 +28,7 @@ class AdminController extends AbstractController
 
     private TranslatorInterface $translator;
 
-    public function __construct(PictureHelper               $profilePictureHelper,
+    public function __construct(MinioS3Helper               $profilePictureHelper,
                                 UserPasswordHasherInterface $passwordHasher,
                                 UserProviderInterface       $userProvider,
                                 ValidatorInterface          $validator,

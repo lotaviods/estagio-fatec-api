@@ -4,7 +4,7 @@ namespace App\Helper;
 
 use App\Service\MinioService;
 
-class PictureHelper
+class MinioS3Helper
 {
     private MinioService $minioService;
 
@@ -13,10 +13,10 @@ class PictureHelper
         $this->minioService = $minioService;
     }
 
-    public function getFullUrl(?string $profileUri): ?string
+    public function getFullUrl(?string $uri): ?string
     {
-        if (!$profileUri) return null;
-        return "{$this->minioService->getEndpoint()}$profileUri";
+        if (!$uri) return null;
+        return "{$this->minioService->getEndpoint()}$uri";
     }
 
     public function saveImageBase64(string $base64, ?string $bucket = null): ?string

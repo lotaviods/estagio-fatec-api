@@ -8,7 +8,7 @@ use App\DTO\LoginDTO;
 use App\Entity\Company;
 use App\Entity\CompanyAddress;
 use App\Form\Company\CompanyAddressForm;
-use App\Helper\PictureHelper;
+use App\Helper\MinioS3Helper;
 use App\Helper\ResponseHelper;
 use App\Mapper\CompanyAddressMapper;
 use App\Mapper\CompanyMapper;
@@ -28,7 +28,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class CompanyController extends AbstractController
 {
-    private PictureHelper $pictureHelper;
+    private MinioS3Helper $pictureHelper;
     private UserPasswordHasherInterface $passwordHasher;
 
     private UserProviderInterface $userProvider;
@@ -37,7 +37,7 @@ class CompanyController extends AbstractController
 
     private TranslatorInterface $translator;
 
-    public function __construct(PictureHelper               $profilePictureHelper,
+    public function __construct(MinioS3Helper               $profilePictureHelper,
                                 UserPasswordHasherInterface $passwordHasher,
                                 UserProviderInterface       $userProvider,
                                 ValidatorInterface          $validator,

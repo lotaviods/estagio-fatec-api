@@ -6,12 +6,15 @@ use App\Entity\Company;
 use App\Entity\Course;
 use App\Entity\JobOffer;
 use App\Entity\Student;
-use App\Helper\PictureHelper;
+use App\Helper\MinioS3Helper;
 use App\Repository\CompanyRepository;
 use App\Repository\JobOfferRepository;
 use App\Repository\StudentRepository;
+use App\Service\JobOfferService;
+use App\Service\StudentService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -21,17 +24,19 @@ use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\ORM\EntityManager;
 use App\Helper\ResponseHelper;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
+use Symfony\Component\Translation\Translator;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class JobOfferController extends AbstractController
 {
-    private PictureHelper $pictureHelper;
+    private MinioS3Helper $pictureHelper;
 
-    public function __construct(PictureHelper $profilePictureHelper)
+    public function __construct(MinioS3Helper $profilePictureHelper)
     {
         $this->pictureHelper = $profilePictureHelper;
     }
 
-    #[Route('/api/v1/job-offers/available', name: 'jobs_available_v1')]
+    #[Route('/api/v1/job-offers/available', name: 'jobs_available_v1', methods: ['GET'])]
     public function getAllAvailableJobs(ManagerRegistry $doctrine): Response
     {
         $entityManager = $doctrine->getManager();
@@ -141,7 +146,7 @@ class JobOfferController extends AbstractController
         return new JsonResponse($job->toArray(), Response::HTTP_OK, [], false);;
     }
 
-    #[Route('/api/v1/job-offers', name: 'job-offers_v1')]
+    #[Route('/api/v1/job-offers', name: 'job-offers_v1', methods: ['GET'])]
     public function getAllJobs(ManagerRegistry $doctrine): Response
     {
         $entityManager = $doctrine->getManager();
@@ -167,7 +172,7 @@ class JobOfferController extends AbstractController
      *  If user is a company user gives only jobs for this company else
      * gives all jobs.
      */
-    #[Route('/api/v1/user/job-offers', name: 'job-offers-from-user_v1')]
+    #[Route('/api/v1/user/job-offers', name: 'job-offers-from-user_v1', methods: ['GET'])]
     public function getAllJobsFromUser(ManagerRegistry $doctrine): Response
     {
         $entityManager = $doctrine->getManager();
@@ -190,7 +195,7 @@ class JobOfferController extends AbstractController
         return new JsonResponse($jobsArray, Response::HTTP_OK, [], false);;
     }
 
-    #[Route('/api/v1/job-offers/available/course/{course_id}', name: 'available-job-offers-course_v1')]
+    #[Route('/api/v1/job-offers/available/course/{course_id}', name: 'available-job-offers-course_v1', methods: ['GET'])]
     public function getAvailableJobsFromCourse(ManagerRegistry $doctrine, Request $request): Response
     {
         $couseId = $request->get("course_id");
@@ -214,7 +219,7 @@ class JobOfferController extends AbstractController
         return new JsonResponse($jobsArray, Response::HTTP_OK, [], false);;
     }
 
-    #[Route('/api/v1/job-offers/{student_id}', name: 'applied-jobs_v1')]
+    #[Route('/api/v1/job-offers/{student_id}', name: 'applied-jobs_v1', methods: ['GET'])]
     public function getAppliedJobsFromStudent(ManagerRegistry $doctrine, Request $request): Response
     {
         $studentId = $request->get("student_id");
@@ -245,30 +250,24 @@ class JobOfferController extends AbstractController
         return new JsonResponse($jobsArray, Response::HTTP_OK, [], false);;
     }
 
-    #[Route('/api/v1/job-offer/{job_id}/application', name: 'applications-job_v1')]
-    public function getJobApplicationsFromId(ManagerRegistry $doctrine, Request $request): Response
+    #[Route('/api/v1/job-offer/{job_id}/application', name: 'applications-job_v1', methods: ['GET'])]
+    public function getJobApplicationsFromId(Request         $request,
+                                             TranslatorInterface $translator,
+                                             StudentService  $studentService,
+                                             JobOfferService $jobOfferService): Response
     {
         $jobId = $request->get("job_id");
-        $entityManager = $doctrine->getManager();
 
-        /** @var JobOfferRepository $repository */
-        $repository = $entityManager->getRepository(JobOffer::class);
-
-        $job = $repository->find($jobId);
-        if (!$job) return new JsonResponse([], Response::HTTP_BAD_REQUEST, [], false);
-
-        $students = $job->getSubscribedStudents();
-        $studentArray = [];
-
-        /** @var Student $student */
-        foreach ($students as $student) {
-            $studentArray[] = $student->toArray();
+        try {
+            $students = $jobOfferService->getAllStudentApplications($jobId, $studentService);
+        } catch (BadRequestHttpException $e) {
+            return ResponseHelper::entityNotFoundBadRequestResponse("job", $translator);
         }
 
-        return new JsonResponse($studentArray, Response::HTTP_OK, [], false);;
+        return new JsonResponse($students, Response::HTTP_OK, [], false);;
     }
 
-    #[Route('/api/v1/job-offer', name: 'get_job_by_v1')]
+    #[Route('/api/v1/job-offer', name: 'get_job_by_v1', methods: ['GET'])]
     public function getJobFromId(ManagerRegistry $doctrine, Request $request): Response
     {
         $id = $request->get("id");
@@ -280,6 +279,8 @@ class JobOfferController extends AbstractController
 
         $repository = $entityManager->getRepository(JobOffer::class);
         $job = $repository->find($id);
+
+        if (!$job) return new JsonResponse([], Response::HTTP_BAD_REQUEST, [], false);
 
         return new JsonResponse($job->toArray(), Response::HTTP_OK, [], false);;
     }
@@ -304,7 +305,7 @@ class JobOfferController extends AbstractController
         return new JsonResponse(array(), Response::HTTP_OK, [], false);
     }
 
-    private function getJobsByLogin(?UserInterface $user, JobOfferRepository $repository,EntityManager $entityManager)
+    private function getJobsByLogin(?UserInterface $user, JobOfferRepository $repository, EntityManager $entityManager)
     {
         $userRoles = $user->getRoles();
         if (in_array('ROLE_COMPANY', $userRoles)) {

@@ -8,5 +8,8 @@ company_country_empty_field: O campo país não deve estar em branco
 company_latitude_empty_field: O campo latitude não deve estar em branco
 company_longitude_empty_field: O campo longitude não deve estar em branco
 field_are_missing: 'Está faltando o seguinte campo: {{ field }}.'
-course_not_found: 'Curso não foi encontrado'
+entity_not_exist: '{{ entity }} não existe!'
+course: curso
+job: vaga
 errors: erros
+error: erro

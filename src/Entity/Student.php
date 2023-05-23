@@ -3,7 +3,7 @@
 
 namespace App\Entity;
 
-use App\Helper\PictureHelper;
+use App\Helper\MinioS3Helper;
 use App\Repository\StudentRepository;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;

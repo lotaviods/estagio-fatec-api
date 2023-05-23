@@ -12,7 +12,7 @@ use App\Entity\MasterAdminCreationInvite;
 use App\Entity\Company;
 use App\Entity\Login;
 use App\Entity\Student;
-use App\Helper\PictureHelper;
+use App\Helper\MinioS3Helper;
 use App\Repository\AdministratorRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Exception;
@@ -35,7 +35,7 @@ class AuthService
 
     private CompanyService $companyService;
 
-    private PictureHelper $profilePictureHelper;
+    private MinioS3Helper $profilePictureHelper;
 
     public function __construct(ManagerRegistry             $doctrine,
                                 UserPasswordHasherInterface $passwordHasher,
@@ -43,7 +43,7 @@ class AuthService
                                 StudentService              $studentService,
                                 AdminService                $adminService,
                                 CompanyService              $companyService,
-                                PictureHelper               $profilePictureHelper
+                                MinioS3Helper $profilePictureHelper
     )
     {
         $this->doctrine = $doctrine;

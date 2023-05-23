@@ -7,5 +7,8 @@ company_state_empty_field: The field state should not be blank.
 company_latitude_empty_field: The field latitude should not be blank.
 company_longitude_empty_field: The field longitude should not be blank.
 field_are_missing: 'The following field are missing: {{ field }}.'
-course_not_found: 'Course has not found'
+entity_not_exist: '{{ entity }} does not exist!'
+course: 'course'
+job: job
 errors: errors
+error: error

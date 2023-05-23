@@ -6,7 +6,7 @@ use App\Entity\Company;
 use App\Entity\Course;
 use App\Entity\JobOffer;
 use App\Entity\Student;
-use App\Helper\PictureHelper;
+use App\Helper\MinioS3Helper;
 use App\Repository\JobOfferRepository;
 use App\Repository\StudentRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -26,7 +26,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class StudentController extends AbstractController
 {
-    private PictureHelper $profilePictureHelper;
+    private MinioS3Helper $profilePictureHelper;
     private UserProviderInterface $userProvider;
 
     private UserPasswordHasherInterface $passwordHasher;
@@ -34,7 +34,7 @@ class StudentController extends AbstractController
     private TranslatorInterface $translator;
 
     public function __construct(
-        PictureHelper               $profilePictureHelper,
+        MinioS3Helper               $profilePictureHelper,
         UserProviderInterface       $userProvider,
         TranslatorInterface         $translator,
         UserPasswordHasherInterface $passwordHasher
@@ -110,7 +110,8 @@ class StudentController extends AbstractController
         if ($newCourseId) {
             /** @var Course $course */
             $course = $doctrine->getRepository(Course::class)->find($newCourseId);
-            if (!$course) return JsonResponse([$this->translator->trans('error') => $this->translator->trans('course_not_found')], Response::HTTP_NOT_FOUND);
+
+            if (!$course) return ResponseHelper::entityNotFoundBadRequestResponse("course", $translator);
             $student->setCourse($course);
         }
 
@@ -187,6 +188,11 @@ class StudentController extends AbstractController
         $qb = $doctrine->getManager()->createQueryBuilder();
 
         $studentLogin = $this->getUser();
+
+        /**
+         * TODO: Remove these comments when mobile send token.
+         *       Maybe change to mobile controller package?
+         */
 
 //        if ($student->getLogin()->getId() !== $studentLogin?->getId())
 //            return new JsonResponse([], 403);
