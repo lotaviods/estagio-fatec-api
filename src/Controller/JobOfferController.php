@@ -95,6 +95,7 @@ class JobOfferController extends AbstractController
     {
         $companyId = $request->get("company_id");
         $jobDescription = $request->get("description");
+        $is_active = $request->get("is_active");
         $title = $request->get("title");
         $targetCourse = $request->get("target_course_id");
         $jobExperience = $request->get("experience");
@@ -136,6 +137,7 @@ class JobOfferController extends AbstractController
         $job->setTargetCourse($targetCourse);
         $job->setRole($role);
         $job->setTitle($title);
+        $job->setIsActive($is_active ?: true);
 
         if ($prom_image) {
             $path = $this->pictureHelper->saveImageBase64($prom_image, "promo-job-images");
