@@ -137,4 +137,20 @@ class Company
         ];
     }
 
+    /**
+     * @return CompanyAddress|null
+     */
+    public function getAddress(): ?CompanyAddress
+    {
+        return $this->address;
+    }
+
+    /**
+     * @param CompanyAddress|null $address
+     */
+    public function setAddress(?CompanyAddress $address): void
+    {
+        $this->address = $address;
+    }
+
 }

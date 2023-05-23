@@ -175,6 +175,10 @@ class JobOffer
 
         $newArray += ["subscribed_by" => $studentSubscribedIdArray];
 
+        $address = $this->getCompany()?->getAddress();
+
+        if(!is_null($address))
+            $newArray["address"] = "{$address->getCity()}, {$address->getState()}, {$address->getCountry()}";
         return $newArray;
     }
 
