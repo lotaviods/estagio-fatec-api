@@ -278,13 +278,14 @@ class JobOfferController extends AbstractController
         $id = $request->get("id");
         if ($id == null) return ResponseHelper::missingParameterResponse("id");
 
-        $newCourseId = $request->get("course_id");
+        $newCourseId = $request->get("target_course_id");
+        $newCompanyId = $request->get("company_id");
         $newTitle = $request->get("title");
-        $newDescription = $request->get("email");
-        $newRole = $request->get("password");
-        $newExperience = $request->get("ra");
+        $newPromotionalImage = $request->get("prom_image");
+        $newDescription = $request->get("description");
+        $newRole = $request->get("role");
+        $newExperience = $request->get("experience");
         $newIsActive = $request->get("is_active") === "true";
-
 
 
         /** @var JobOfferRepository $repository */
@@ -302,6 +303,22 @@ class JobOfferController extends AbstractController
 
             if (!$course) return ResponseHelper::entityNotFoundBadRequestResponse("course", $translator);
             $job->setTargetCourse($course);
+        }
+
+
+        $path = $this->minioS3Helper->saveImageBase64($newPromotionalImage, "promo-job-images");
+        if ($path)
+            $job->setPromotionalUrl($path);
+
+        if(is_null($newPromotionalImage))
+            $job->setPromotionalUrl(null);
+
+        if ($newCompanyId) {
+            /** @var Course $course */
+            $company = $doctrine->getRepository(Company::class)->find($newCompanyId);
+
+            if (!$company) return ResponseHelper::entityNotFoundBadRequestResponse("company", $translator);
+            $job->setCompany($company);
         }
 
         if (!is_null($newTitle)) {
