@@ -53,6 +53,9 @@ class JobOffer
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $created_at = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $title = null;
+
     public function __construct()
     {
         $this->subscribedStudents = new ArrayCollection();
@@ -136,6 +139,7 @@ class JobOffer
         $newArray = [
             "id" => $this->id,
             "created_at" => $this->getCreatedAt()->format(DateTimeInterface::ATOM),
+            "title" => $this->getTitle(),
             "description" => $this->description,
             "role" => $this->role,
             "job_experience" => $this->job_experience,
@@ -218,5 +222,17 @@ class JobOffer
     public function getSubscribedStudents(): Collection
     {
         return $this->subscribedStudents;
+    }
+
+    public function getTitle(): ?string
+    {
+        return $this->title;
+    }
+
+    public function setTitle(?string $title): self
+    {
+        $this->title = $title;
+
+        return $this;
     }
 }
