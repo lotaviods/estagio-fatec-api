@@ -322,7 +322,7 @@ class JobOfferController extends AbstractController
         if (!is_null($newIsActive)) {
             $job->setIsActive($newIsActive);
         }
-
+        $manager = $doctrine->getManager();
         $manager->persist($job);
         $manager->flush();
 
