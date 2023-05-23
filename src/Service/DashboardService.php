@@ -28,7 +28,7 @@ class DashboardService
     }
 
 
-    private function getEntitiesCount(): array
+    private function getEntitiesCount()
     {
         //todo: Make cache of this result
         $manager = $this->doctrine->getManager();
@@ -46,6 +46,6 @@ class DashboardService
             (SELECT COUNT(*) FROM job_offer) AS job_offer_count
     ', $rsm);
 
-        return $query->getArrayResult();
+        return $query->getArrayResult()[0];
     }
 }
