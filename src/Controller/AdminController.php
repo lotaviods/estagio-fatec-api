@@ -95,9 +95,13 @@ class AdminController extends AbstractController
             $login->setName($newName);
 
         if (!is_null($newProfilePicture)) {
-            $path = $this->profilePictureHelper->saveImageBase64($newProfilePicture);
-            if ($path)
-                $login->setProfilePicture($path);
+            if (!empty($newPromotionalImage)) {
+                $path = $this->profilePictureHelper->saveImageBase64($newProfilePicture);
+                if ($path)
+                    $login->setProfilePicture($path);
+            } else {
+                $login->setProfilePicture(null);
+            }
         }
 
 

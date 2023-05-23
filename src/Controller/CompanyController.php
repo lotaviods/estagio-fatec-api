@@ -145,10 +145,14 @@ class CompanyController extends AbstractController
         $address = $repositoryAddress->findOneBy(['company' => $company->getId()]);
         $newAddress = CompanyAddressMapper::fromRequestToAddress($request, $address);
 
-        if ($newProfilePicture) {
-            $path = $this->pictureHelper->saveImageBase64($newProfilePicture);
-            if ($path)
-                $company->setProfilePicture($path);
+        if (!is_null($newProfilePicture)) {
+            if (!empty($newPromotionalImage)) {
+                $path = $this->pictureHelper->saveImageBase64($newProfilePicture);
+                if ($path)
+                    $company->setProfilePicture($path);
+            } else {
+                $company->setProfilePicture(null);
+            }
         }
 
         if ($isActive != null) {
