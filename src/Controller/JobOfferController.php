@@ -49,9 +49,7 @@ class JobOfferController extends AbstractController
                 $currentJob = $job->toArray();
                 /** @var JobOffer $job */
                 $currentJob["company_profile_picture"] = $job->getCompany()?->getLogin()?->getProfilePictureUrl($this->minioS3Helper);
-                if ($currentJob["promotional_image_url"]) {
-                    $currentJob["promotional_image_url"] = $this->minioS3Helper->getFullUrl($currentJob["promotional_image_url"]);
-                }
+                $currentJob["promotional_image_url"] = $this->minioS3Helper->getFullUrl($job->getPromotionalImageUrl());
                 $jobsArray[] = $currentJob;
             }
 
@@ -244,9 +242,7 @@ class JobOfferController extends AbstractController
                 $currentJob = $job->toArray();
                 /** @var JobOffer $job */
                 $currentJob["company_profile_picture"] = $job->getCompany()?->getLogin()?->getProfilePictureUrl($this->minioS3Helper);
-                if ($currentJob["promotional_image_url"]) {
-                    $currentJob["promotional_image_url"] = $this->minioS3Helper->getFullUrl($currentJob["promotional_image_url"]);
-                }
+                $currentJob["promotional_image_url"] = $this->minioS3Helper->getFullUrl($job->getPromotionalImageUrl());
                 $jobsArray[] = $currentJob;
             }
         }
