@@ -120,4 +120,24 @@ class AdminController extends AbstractController
 
         return new JsonResponse([], Response::HTTP_OK, [], false);
     }
+
+    #[Route('/api/v1/admin', name: 'admin-delete_v1', methods: ['DELETE'])]
+    public function deleteAdmin(ManagerRegistry $doctrine, Request $request): Response
+    {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
+        $id = $request->get("id");
+
+        if ($id == null) return ResponseHelper::missingParameterResponse("id");
+
+        $entityManager = $doctrine->getManager();
+        /** @var AdministratorRepository $repository */
+
+        $repository = $entityManager->getRepository(Administrator::class);
+        $admin = $repository->find($id);
+
+        $repository->remove($admin, true);
+
+        return new JsonResponse(array(), Response::HTTP_OK, [], false);
+    }
 }
