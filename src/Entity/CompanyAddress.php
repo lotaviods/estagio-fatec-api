@@ -175,7 +175,7 @@ class CompanyAddress
     /**
      * @return string
      */
-    public function getCountry(): string
+    public function getCountry(): ?string
     {
         return $this->country;
     }
