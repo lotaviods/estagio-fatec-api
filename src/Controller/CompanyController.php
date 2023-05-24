@@ -146,7 +146,7 @@ class CompanyController extends AbstractController
         $newAddress = CompanyAddressMapper::fromRequestToAddress($request, $address);
 
         if (!is_null($newProfilePicture)) {
-            if (!empty($newPromotionalImage)) {
+            if (!empty($newProfilePicture)) {
                 $path = $this->pictureHelper->saveImageBase64($newProfilePicture);
                 if ($path)
                     $company->setProfilePicture($path);
