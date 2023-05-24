@@ -72,7 +72,7 @@ class StudentController extends AbstractController
         /** TODO: Refactor and set most of this in services */
 
         $newCourseId = $request->get("course_id");
-        $newName = $request->get("name");
+        $newName = $request->get("full_name");
         $newEmail = $request->get("email");
         $newPassword = $request->get("password");
         $newRa = $request->get("ra");
