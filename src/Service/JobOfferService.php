@@ -31,7 +31,7 @@ class JobOfferService
 
         /** @var Student $student */
         foreach ($job->getSubscribedStudents() as $student) {
-            $studentArray[] = $studentService->getStudentApplicationsDetail($student);
+            $studentArray[] = $studentService->getStudentApplicationsDetail($student, $job);
         }
         $jobArray = $job->toArray();
         $jobArray["company_profile_picture"] = $job->getCompany()?->getLogin()?->getProfilePictureUrl($this->minioS3Helper);

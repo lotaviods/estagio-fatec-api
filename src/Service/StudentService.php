@@ -3,10 +3,13 @@
 namespace App\Service;
 
 use App\Entity\AccessToken;
+use App\Entity\JobOffer;
 use App\Entity\Login;
 use App\Entity\Student;
+use App\Entity\StudentJobApplicationStatus;
 use App\Entity\StudentResume;
 use App\Helper\MinioS3Helper;
+use App\Repository\StudentJobApplicationStatusRepository;
 use App\Repository\StudentRepository;
 use App\Repository\StudentResumeRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -79,7 +82,26 @@ class StudentService
         ];
     }
 
-    public function getStudentApplicationsDetail(Student $student): array
+    public function loadApplicationDetail(Student $student, JobOffer $job): StudentJobApplicationStatus
+    {
+        /** @var StudentJobApplicationStatusRepository $appStatusRepository */
+        $appStatusRepository = $this->manager->getRepository(StudentJobApplicationStatus::class);
+        $studentApplicationInfo = $appStatusRepository->findOneBy(['student' => $student->getId()]);
+
+        if (is_null($studentApplicationInfo)) {
+            $newAppStatus = new StudentJobApplicationStatus();
+            $newAppStatus->setStatus(\JobOfferApplicationStatus::None);
+            $newAppStatus->setStudent($student);
+            $newAppStatus->setJobOffer($job);
+
+            $appStatusRepository->save($newAppStatus, true);
+
+            return $newAppStatus;
+        }
+        return $studentApplicationInfo;
+    }
+
+    public function getStudentApplicationsDetail(Student $student, JobOffer $job): array
     {
         return [
             "id" => $student->getId(),
@@ -87,7 +109,8 @@ class StudentService
             "full_name" => $student->getName(),
             "profile_picture" => $this->minioS3Helper->getFullUrl($student->getLogin()?->getProfilePicture()),
             "resume" => $this->minioS3Helper->getFullUrl($student->getResume()?->getUri()),
-            "email" => $student->getLogin()?->getEmail()
+            "email" => $student->getLogin()?->getEmail(),
+            "application_status" => $this->loadApplicationDetail($student, $job)
         ];
     }
 

@@ -6,9 +6,12 @@ use App\Entity\Company;
 use App\Entity\Course;
 use App\Entity\JobOffer;
 use App\Entity\Student;
+use App\Entity\StudentJobApplicationStatus;
 use App\Helper\MinioS3Helper;
 use App\Repository\JobOfferRepository;
+use App\Repository\StudentJobApplicationStatusRepository;
 use App\Repository\StudentRepository;
+use App\Service\StudentService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -33,17 +36,21 @@ class StudentController extends AbstractController
 
     private TranslatorInterface $translator;
 
+    private StudentService $studentService;
+
     public function __construct(
         MinioS3Helper               $profilePictureHelper,
         UserProviderInterface       $userProvider,
         TranslatorInterface         $translator,
-        UserPasswordHasherInterface $passwordHasher
+        UserPasswordHasherInterface $passwordHasher,
+        StudentService              $studentService
     )
     {
         $this->userProvider = $userProvider;
         $this->profilePictureHelper = $profilePictureHelper;
         $this->translator = $translator;
         $this->passwordHasher = $passwordHasher;
+        $this->studentService = $studentService;
     }
 
     #[Route('/api/v1/student', name: 'student-list_v1', methods: ['GET'])]
@@ -119,6 +126,48 @@ class StudentController extends AbstractController
         $manager->flush();
 
         return new JsonResponse([], Response::HTTP_OK, [], false);;
+    }
+
+    #[Route('/api/v1/student/{student_id}/job/{job_id}/application-status', name: 'student-update-application-status_v1', methods: ['PUT'])]
+    public function updateStudentJobApplicationStatus(ManagerRegistry $doctrine, Request $request): Response
+    {
+        $newStatus = (int)$request->get("status");
+        $job_id = $request->get("job_id");
+        $student_id = $request->get("student_id");
+
+        if ($job_id == null) return ResponseHelper::missingParameterResponse("job_id");
+        if ($student_id == null) return ResponseHelper::missingParameterResponse("student_id");
+
+        $entityManager = $doctrine->getManager();
+        /** @var StudentJobApplicationStatusRepository $repository */
+
+        $repository = $entityManager->getRepository(StudentJobApplicationStatus::class);
+        $applicationStatus = $repository->findOneBy(['student' => $student_id, 'jobOffer' => $job_id]);
+
+        if (is_null($applicationStatus)) {
+            /** @var JobOfferRepository $jobOfferRepository */
+            $jobOfferRepository = $entityManager->getRepository(JobOffer::class);
+            /** @var StudentRepository $studentRepostitory */
+            $studentRepostitory = $entityManager->getRepository(Student::class);
+
+            $student = $studentRepostitory->findOneBy(['id' => $student_id]);
+            $jobOffer = $jobOfferRepository->findOneBy(['id' => $job_id]);
+
+            if (is_null($student) || is_null($jobOffer))
+                throw new  BadRequestHttpException();
+            if (!$student->getAppliedJobOffers()->contains($jobOffer))
+                throw new  BadRequestHttpException();
+
+            $applicationStatus = $this->studentService->loadApplicationDetail($student, $jobOffer);
+        }
+
+        if (!is_null($newStatus) && is_numeric($newStatus))
+            $applicationStatus?->setStatus($newStatus);
+
+        $entityManager->persist($applicationStatus);
+        $entityManager->flush();
+
+        return new JsonResponse(array(), Response::HTTP_OK, [], false);
     }
 
     #[Route('/api/v1/student', name: 'student-delete_v1', methods: ['DELETE'])]
