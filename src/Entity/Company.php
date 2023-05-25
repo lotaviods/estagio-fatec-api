@@ -20,9 +20,6 @@ class Company
     #[ORM\OneToMany(mappedBy: 'company', targetEntity: JobOffer::class, cascade: ['persist'], orphanRemoval: true)]
     private Collection $job_offer;
 
-    #[ORM\Column]
-    private ?bool $active = null;
-
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(nullable: false)]
     private ?Login $login = null;
@@ -81,18 +78,6 @@ class Company
         return $this;
     }
 
-    public function isActive(): ?bool
-    {
-        return $this->active;
-    }
-
-    public function setActive(bool $active): self
-    {
-        $this->active = $active;
-
-        return $this;
-    }
-
     /**
      * @return string|null
      */
@@ -132,7 +117,6 @@ class Company
             'id' => $this->id,
             'name' => $this->getName(),
             'email' => $this->login?->getEmail(),
-            'active' => $this->isActive(),
             'address' => $this->address?->toArray()
         ];
     }

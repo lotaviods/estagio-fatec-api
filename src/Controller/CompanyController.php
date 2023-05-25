@@ -121,7 +121,6 @@ class CompanyController extends AbstractController
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
         $id = $request->get("id");
-        $isActive = $request->get("is_active");
         $newName = $request->get("full_name");
         $newEmail = $request->get("email");
         $newPassword = $request->get("password");
@@ -153,10 +152,6 @@ class CompanyController extends AbstractController
             } else {
                 $company->setProfilePicture(null);
             }
-        }
-
-        if ($isActive != null) {
-            $company->setActive($isActive);
         }
 
         if ($newPassword) {
