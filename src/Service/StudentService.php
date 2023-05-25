@@ -110,7 +110,7 @@ class StudentService
             "profile_picture" => $this->minioS3Helper->getFullUrl($student->getLogin()?->getProfilePicture()),
             "resume" => $this->minioS3Helper->getFullUrl($student->getResume()?->getUri()),
             "email" => $student->getLogin()?->getEmail(),
-            "application_status" => $this->loadApplicationDetail($student, $job)
+            "application_status" => $this->loadApplicationDetail($student, $job)->getStatus()
         ];
     }
 
