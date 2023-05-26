@@ -135,7 +135,7 @@ class JobOfferController extends AbstractController
         $job->setTargetCourse($targetCourse);
         $job->setRole($role);
         $job->setTitle($title);
-        $job->setIsActive($is_active ?: true);
+        $job->setIsActive($is_active);
 
         if ($prom_image) {
             $path = $this->minioS3Helper->saveImageBase64($prom_image, "promo-job-images");
