@@ -58,7 +58,7 @@ class DashboardService
     private function getChartData()
     {
         return [
-            "company_current_month_created_jobs" => [],
+            "accepted_students_by_companies_in_month" => $this->acceptedStudentsByCompanies(),
             "job_month_data" => [
                 "open" => $this->countJobsCreatedLast12Months(),
                 "closed" => $this->countInactiveJobsLast12Months()
@@ -92,6 +92,33 @@ class DashboardService
         $results = $query->getResult();
 
         return $this->translateMonths($results);
+    }
+
+    public function acceptedStudentsByCompanies()
+    {
+        $manager = $this->doctrine->getManager();
+
+        $sql = "
+            SELECT l.name AS company_name, COUNT(sjas.id) AS accepted_students
+            FROM company c
+            JOIN login l ON l.id = c.login_id
+            JOIN job_offer jo ON jo.company_id = c.id
+            JOIN student_job_application_status sjas ON sjas.job_id = jo.id
+            JOIN student s ON s.id = sjas.student_id
+            WHERE sjas.status = 1
+            GROUP BY l.name;
+";
+
+        $rsm = new \Doctrine\ORM\Query\ResultSetMappingBuilder($manager);
+        $rsm->addScalarResult('company_id', 'companyId');
+        $rsm->addScalarResult('company_name', 'companyName');
+        $rsm->addScalarResult('accepted_students', 'acceptedStudents');
+
+        $query = $manager->createNativeQuery($sql, $rsm);
+        $results = $query->getResult();
+
+        return $results;
+
     }
 
     public function countInactiveJobsLast12Months()
