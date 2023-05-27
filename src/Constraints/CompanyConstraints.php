@@ -28,8 +28,7 @@ class CompanyConstraints
                     'message' => $translator->trans('company_email_empty_field'),
                 ]),
                 new Email()
-            ],
-            'profile_picture' => [],
+            ]
         ], allowExtraFields: true, allowMissingFields: false, missingFieldsMessage: $translator->trans("field_are_missing"));
     }
 
