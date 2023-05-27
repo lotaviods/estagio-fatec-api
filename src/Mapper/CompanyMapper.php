@@ -11,7 +11,6 @@ class CompanyMapper
     public static function fromRequest(): Company
     {
         $company = new Company();
-        $company->setActive(true);
         return $company;
     }
 }
