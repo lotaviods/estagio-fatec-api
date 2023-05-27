@@ -58,37 +58,12 @@ class DashboardService
     private function getChartData()
     {
         return [
-            "company_current_month_created_jobs" => $this->countJobOffersByCompanyThisMonth(),
+            "company_current_month_created_jobs" => [],
             "job_month_data" => [
                 "open" => $this->countJobsCreatedLast12Months(),
                 "closed" => $this->countInactiveJobsLast12Months()
             ]
         ];
-    }
-
-    public function countJobOffersByCompanyThisMonth()
-    {
-        $manager = $this->doctrine->getManager();
-
-        $sql = "
-            SELECT c.id as company_id, l.name as description, COUNT(jo.id) as job_offer_count
-            FROM job_offer jo
-            JOIN company c ON jo.company_id = c.id
-            JOIN login l ON c.login_id = l.id
-            WHERE jo.created_at >= DATE_FORMAT(CURRENT_DATE(), '%Y-%m-01')
-              AND jo.created_at < DATE_ADD(DATE_FORMAT(CURRENT_DATE(), '%Y-%m-01'), INTERVAL 1 MONTH)
-            GROUP BY c.id, l.name
-            ORDER BY job_offer_count DESC
-            LIMIT 10
-        ";
-        $rsm = new ResultSetMappingBuilder($manager);
-        $rsm->addScalarResult('description', 'description');
-        $rsm->addScalarResult('job_offer_count', 'job_offer_count');
-
-        $query = $manager->createNativeQuery($sql, $rsm);
-
-
-        return $query->getResult();
     }
 
     public function countJobsCreatedLast12Months()
@@ -140,7 +115,7 @@ class DashboardService
 
         $rsm = new ResultSetMappingBuilder($manager);
         $rsm->addScalarResult('month', 'month');
-        $rsm->addScalarResult('inactive_job_count', 'inactive_job_count');
+        $rsm->addScalarResult('inactive_job_count', 'job_count');
 
         $query = $manager->createNativeQuery($sql, $rsm);
         $results = $query->getResult();
@@ -150,13 +125,28 @@ class DashboardService
 
     private function translateMonths($results)
     {
+        $monthlyResults = [];
 
-        // Translate month names
-        foreach ($results as &$result) {
+        // Create an array for all the months
+        $allMonths = [
+            'January', 'February', 'March', 'April', 'May', 'June',
+            'July', 'August', 'September', 'October', 'November', 'December'
+        ];
+
+        // Initialize the monthly results array with counts of 0 for all months
+        foreach ($allMonths as $month) {
+            $translatedMonth = $this->translator->trans('month_' . strtolower($month));
+            $monthlyResults[$translatedMonth] = 0;
+        }
+
+        // Populate the monthly results array with the query results
+        foreach ($results as $result) {
             $month = $result['month'];
             $translatedMonth = $this->translator->trans('month_' . strtolower($month));
-            $result['month'] = $translatedMonth;
+            $monthlyResults[$translatedMonth] = $result['job_count'];
         }
-        return $results;
+
+
+        return $monthlyResults;
     }
 }
