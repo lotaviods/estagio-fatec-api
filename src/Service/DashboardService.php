@@ -7,14 +7,18 @@ use Doctrine\ORM\Query\ResultSetMapping;
 use Doctrine\ORM\Query\ResultSetMappingBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class DashboardService
 {
     private ManagerRegistry $doctrine;
 
-    public function __construct(ManagerRegistry $doctrine)
+    private TranslatorInterface $translator;
+
+    public function __construct(ManagerRegistry $doctrine, TranslatorInterface $translator)
     {
         $this->doctrine = $doctrine;
+        $this->translator = $translator;
     }
 
     public function getDashboardInfo(?UserInterface $user): array
@@ -61,6 +65,7 @@ class DashboardService
             ]
         ];
     }
+
     public function countJobOffersByCompanyThisMonth()
     {
         $manager = $this->doctrine->getManager();
@@ -92,7 +97,7 @@ class DashboardService
 
         $sql = "
             SELECT 
-                DATE_FORMAT(jo.created_at, '%Y-%m') AS month,
+                MONTHNAME(jo.created_at) AS month,
                 COUNT(jo.id) AS job_count
             FROM
                 job_offer jo
@@ -109,7 +114,9 @@ class DashboardService
         $rsm->addScalarResult('job_count', 'job_count');
 
         $query = $manager->createNativeQuery($sql, $rsm);
-        return $query->getResult();
+        $results = $query->getResult();
+
+        return $this->translateMonths($results);
     }
 
     public function countInactiveJobsLast12Months()
@@ -118,7 +125,7 @@ class DashboardService
 
         $sql = "
             SELECT 
-                DATE_FORMAT(jo.created_at, '%Y-%m') AS month,
+                MONTHNAME(jo.created_at) AS month,
                 COUNT(jo.id) AS inactive_job_count
             FROM
                 job_offer jo
@@ -136,7 +143,20 @@ class DashboardService
         $rsm->addScalarResult('inactive_job_count', 'inactive_job_count');
 
         $query = $manager->createNativeQuery($sql, $rsm);
+        $results = $query->getResult();
 
-        return  $query->getResult();
+        return $this->translateMonths($results);
+    }
+
+    private function translateMonths($results)
+    {
+
+        // Translate month names
+        foreach ($results as &$result) {
+            $month = $result['month'];
+            $translatedMonth = $this->translator->trans('month_' . strtolower($month));
+            $result['month'] = $translatedMonth;
+        }
+        return $results;
     }
 }

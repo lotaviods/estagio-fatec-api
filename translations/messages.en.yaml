@@ -9,6 +9,18 @@ company_longitude_empty_field: The field longitude should not be blank.
 field_are_missing: 'The following field are missing: {{ field }}.'
 entity_not_exist: '{{ entity }} does not exist!'
 course: 'course'
+month_january: 'January'
+month_february: 'February'
+month_march: 'March'
+month_april: 'April'
+month_may: 'May'
+month_june: 'June'
+month_july: 'July'
+month_august: 'August'
+month_september: 'September'
+month_october: 'October'
+month_november: 'November'
+month_december: 'December'
 job: job
 errors: errors
 error: error
