@@ -60,13 +60,13 @@ class DashboardService
         return [
             "accepted_students_by_companies_in_month" => $this->acceptedStudentsByCompanies(),
             "job_month_data" => [
-                "open" => $this->countJobsCreatedLast12Months(),
+                "open" => $this->countJobsCreatedAndActiveLast12Months(),
                 "closed" => $this->countInactiveJobsLast12Months()
             ]
         ];
     }
 
-    public function countJobsCreatedLast12Months()
+    public function countJobsCreatedAndActiveLast12Months(): array
     {
         $manager = $this->doctrine->getManager();
 
@@ -78,6 +78,7 @@ class DashboardService
                 job_offer jo
             WHERE
                 jo.created_at >= DATE_SUB(CURRENT_DATE(), INTERVAL 12 MONTH)
+                AND jo.is_active = 1
             GROUP BY
                 month
             ORDER BY
@@ -121,7 +122,7 @@ class DashboardService
 
     }
 
-    public function countInactiveJobsLast12Months()
+    public function countInactiveJobsLast12Months(): array
     {
         $manager = $this->doctrine->getManager();
 
