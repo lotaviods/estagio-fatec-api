@@ -46,6 +46,17 @@ class AdministratorRepository extends ServiceEntityRepository
         return $this->findOneBy(['login' => "{$user->getId()}"]);
     }
 
+    public function findByAdminFilteringId(int $id)
+    {
+        $qb = $this->createQueryBuilder('a');
+        $qb->where('l.id != :identifier')
+            ->innerJoin(Login::class, 'l', 'WITH', 'a.login = l.id')
+            ->setParameter('identifier', $id);
+
+        return $qb->getQuery()
+            ->getResult();
+    }
+
 //    /**
 //     * @return Administrator[] Returns an array of Administrator objects
 //     */
