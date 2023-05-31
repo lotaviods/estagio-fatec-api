@@ -50,7 +50,7 @@ class AdminController extends AbstractController
 
         $repository = $entityManager->getRepository(Administrator::class);
 
-        $admins = $repository->findByAdminFilteringId($this->getUser()->getId());
+        $admins = $repository->findByFilteringLoginId($this->getUser()->getId());
         $adminArray = [];
 
         /** @var Administrator $admin */

@@ -46,7 +46,7 @@ class AdministratorRepository extends ServiceEntityRepository
         return $this->findOneBy(['login' => "{$user->getId()}"]);
     }
 
-    public function findByAdminFilteringId(int $id)
+    public function findByFilteringLoginId(int $id)
     {
         $qb = $this->createQueryBuilder('a');
         $qb->where('l.id != :identifier')
@@ -55,6 +55,17 @@ class AdministratorRepository extends ServiceEntityRepository
 
         return $qb->getQuery()
             ->getResult();
+    }
+
+    public function findOneByLoginId(int $id): Administrator
+    {
+        $qb = $this->createQueryBuilder('a');
+        $qb->where('l.id = :identifier')
+            ->innerJoin(Login::class, 'l', 'WITH', 'a.login = l.id')
+            ->setParameter('identifier', $id);
+
+        return $qb->getQuery()
+            ->getSingleResult();
     }
 
 //    /**

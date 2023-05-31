@@ -39,6 +39,16 @@ class CompanyRepository extends ServiceEntityRepository
             $this->getEntityManager()->flush();
         }
     }
+    public function findOneByLoginId(int $id): ?Company
+    {
+        $qb = $this->createQueryBuilder('c');
+        $qb->where('l.id = :identifier')
+            ->innerJoin(Login::class, 'l', 'WITH', 'c.login = l.id')
+            ->setParameter('identifier', $id);
+
+        return $qb->getQuery()
+            ->getOneOrNullResult();
+    }
 
 //    /**
 //     * @return Company[] Returns an array of Company objects
