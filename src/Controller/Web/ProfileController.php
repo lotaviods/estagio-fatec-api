@@ -21,7 +21,7 @@ use function MongoDB\BSON\fromJSON;
 
 class ProfileController extends AbstractController
 {
-    #[Route('/api/v1/web/profile', name: 'web_profile_v1', methods: ['GET'])]
+    #[Route('/api/v1/web/profile', name: 'get_web_profile_v1', methods: ['GET'])]
     #[IsGranted("IS_AUTHENTICATED_FULLY")]
     public function getProfile(WebProfileService $webProfileService): JsonResponse
     {
@@ -31,7 +31,7 @@ class ProfileController extends AbstractController
         return new JsonResponse($webProfileService->getLoginProfileInfo($user), 200);
     }
 
-    #[Route('/api/v1/web/profile', name: 'web_profile_v1', methods: ['PUT'])]
+    #[Route('/api/v1/web/profile', name: 'update_web_profile_v1', methods: ['PUT'])]
     #[IsGranted("IS_AUTHENTICATED_FULLY")]
     public function updateProfile(Request $request): JsonResponse
     {
