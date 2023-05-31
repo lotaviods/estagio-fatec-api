@@ -118,7 +118,9 @@ class CompanyController extends AbstractController
         $manager = $doctrine->getManager();
 
         /** TODO: Refactor and set most of this in services */
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
+        //TODO: Let company edit own profile by login == company_id
+        // $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
         $id = $request->get("id");
         $newName = $request->get("full_name");
