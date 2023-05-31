@@ -177,7 +177,10 @@ class CompanyController extends AbstractController
         $manager->persist($newAddress);
         $manager->flush();
 
-        return new JsonResponse([], Response::HTTP_OK, [], false);;
+        $array = $company->toArray();
+        $array['profile_picture'] = $this->pictureHelper->getFullUrl($company->getProfilePicture());
+
+        return new JsonResponse($array, Response::HTTP_OK, [], false);
     }
 
     #[Route('api/v1/register/company', name: 'companyRegister_v1', methods: ['POST'])]

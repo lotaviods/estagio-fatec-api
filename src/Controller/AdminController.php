@@ -89,7 +89,7 @@ class AdminController extends AbstractController
         $manager = $doctrine->getManager();
         $login = $admin->getLogin();
 
-        if(!is_null($newName))
+        if (!is_null($newName))
             $login->setName($newName);
 
         if (!is_null($newProfilePicture)) {
@@ -116,7 +116,10 @@ class AdminController extends AbstractController
         $manager->persist($admin);
         $manager->flush();
 
-        return new JsonResponse([], Response::HTTP_OK, [], false);
+        $array = $admin->toArray();
+        $array['profile_picture'] = $this->profilePictureHelper->getFullUrl($admin->getLogin()?->getProfilePicture());
+
+        return new JsonResponse($array, Response::HTTP_OK, [], false);
     }
 
     #[Route('/api/v1/admin', name: 'admin-delete_v1', methods: ['DELETE'])]
