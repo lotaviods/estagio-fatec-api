@@ -125,16 +125,16 @@ class StudentService
             $jobOffer = $status?->getJobOffer();
             $company = $jobOffer?->getCompany();
             $address = $company?->getAddress();
-
-            $array[] = [
-                "notification_type" => 1,
-                "company_name" => $company?->getName(),
-                "job_title" => $jobOffer?->getTitle(),
-                "status_changed_date" => $status->getUpdatedAt()->format(DateTimeInterface::ATOM),
-                "approved" => ($status->getStatus() === 1) ? true : false,
-                "company_profile_picture" => $this->minioS3Helper->getFullUrl($company?->getProfilePicture()),
-                "location" => "{$address?->getCity()}, {$address?->getState()}, {$address?->getCountry()}"
-            ];
+            if ($student->getAppliedJobOffers()->contains($jobOffer))
+                $array[] = [
+                    "notification_type" => 1,
+                    "company_name" => $company?->getName(),
+                    "job_title" => $jobOffer?->getTitle(),
+                    "status_changed_date" => $status->getUpdatedAt()->format(DateTimeInterface::ATOM),
+                    "approved" => ($status->getStatus() === 1) ? true : false,
+                    "company_profile_picture" => $this->minioS3Helper->getFullUrl($company?->getProfilePicture()),
+                    "location" => "{$address?->getCity()}, {$address?->getState()}, {$address?->getCountry()}"
+                ];
         }
 
         return $array;
