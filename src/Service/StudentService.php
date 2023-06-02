@@ -130,7 +130,7 @@ class StudentService
                     "notification_type" => 1,
                     "company_name" => $company?->getName(),
                     "job_title" => $jobOffer?->getTitle(),
-                    "status_changed_date" => $status->getUpdatedAt()->format(DateTimeInterface::ATOM),
+                    "status_changed_date" => $status?->getUpdatedAt()?->format(DateTimeInterface::ATOM),
                     "approved" => ($status->getStatus() === 1) ? true : false,
                     "company_profile_picture" => $this->minioS3Helper->getFullUrl($company?->getProfilePicture()),
                     "location" => "{$address?->getCity()}, {$address?->getState()}, {$address?->getCountry()}"
