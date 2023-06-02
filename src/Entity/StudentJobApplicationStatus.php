@@ -3,9 +3,11 @@
 namespace App\Entity;
 
 use App\Repository\StudentJobApplicationStatusRepository;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: StudentJobApplicationStatusRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 class StudentJobApplicationStatus
 {
     #[ORM\Id]
@@ -23,6 +25,9 @@ class StudentJobApplicationStatus
 
     #[ORM\Column(type: "integer", options: ["default" => 0])]
     private int $status;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $updated_at = null;
 
     public function getStudent(): ?Student
     {
@@ -73,5 +78,16 @@ class StudentJobApplicationStatus
     public function setId($id): void
     {
         $this->id = $id;
+    }
+
+    #[ORM\PrePersist]
+    public function setUpdatedAtNow(): void
+    {
+        $this->updated_at = new \DateTime();
+    }
+
+    public function getUpdatedAt(): ?\DateTimeInterface
+    {
+        return $this->updated_at;
     }
 }

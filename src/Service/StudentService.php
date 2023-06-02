@@ -12,6 +12,7 @@ use App\Helper\MinioS3Helper;
 use App\Repository\StudentJobApplicationStatusRepository;
 use App\Repository\StudentRepository;
 use App\Repository\StudentResumeRepository;
+use DateTimeInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\ObjectManager;
 use stdClass;
@@ -93,7 +94,7 @@ class StudentService
             $newAppStatus->setStatus(\JobOfferApplicationStatus::None);
             $newAppStatus->setStudent($student);
             $newAppStatus->setJobOffer($job);
-
+            $newAppStatus->setUpdatedAtNow();
             $appStatusRepository->save($newAppStatus, true);
 
             return $newAppStatus;
@@ -101,7 +102,7 @@ class StudentService
         return $studentApplicationInfo;
     }
 
-    public function getStudentApplicationsDetail(Student $student, JobOffer $job): array
+    public function getStudentApplicationsDetailByJob(Student $student, JobOffer $job): array
     {
         return [
             "id" => $student->getId(),
@@ -112,6 +113,31 @@ class StudentService
             "email" => $student->getLogin()?->getEmail(),
             "application_status" => $this->loadApplicationDetail($student, $job)->getStatus()
         ];
+    }
+
+    public function getStudentAllApplications(Student $student): array
+    {
+        $appStatusRepository = $this->manager->getRepository(StudentJobApplicationStatus::class);
+        $statuses = $appStatusRepository->findBy(['student' => $student->getId()]);
+        $array = [];
+
+        foreach ($statuses as $status) {
+            $jobOffer = $status?->getJobOffer();
+            $company = $jobOffer?->getCompany();
+            $address = $company?->getAddress();
+
+            $array[] = [
+                "notification_type" => 1,
+                "company_name" => $company?->getName(),
+                "job_title" => $jobOffer?->getTitle(),
+                "status_changed_date" => $status->getUpdatedAt()->format(DateTimeInterface::ATOM),
+                "approved" => ($status->getStatus() === 1) ? true : false,
+                "company_profile_picture" => $this->minioS3Helper->getFullUrl($company?->getProfilePicture()),
+                "location" => "{$address?->getCity()}, {$address?->getState()}, {$address?->getCountry()}"
+            ];
+        }
+
+        return $array;
     }
 
     public function setStudentProfilePicture(string $uri, mixed $studentId): void

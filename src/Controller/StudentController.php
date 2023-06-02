@@ -161,8 +161,10 @@ class StudentController extends AbstractController
             $applicationStatus = $this->studentService->loadApplicationDetail($student, $jobOffer);
         }
 
-        if (!is_null($newStatus) && is_numeric($newStatus))
+        if (!is_null($newStatus) && is_numeric($newStatus)) {
             $applicationStatus?->setStatus($newStatus);
+            $applicationStatus->setUpdatedAtNow();
+        }
 
         $entityManager->persist($applicationStatus);
         $entityManager->flush();
