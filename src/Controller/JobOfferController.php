@@ -2,9 +2,11 @@
 
 namespace App\Controller;
 
+use App\Constants\LoginType;
 use App\Entity\Company;
 use App\Entity\Course;
 use App\Entity\JobOffer;
+use App\Entity\Login;
 use App\Entity\Student;
 use App\Helper\MinioS3Helper;
 use App\Repository\CompanyRepository;
@@ -91,7 +93,24 @@ class JobOfferController extends AbstractController
     #[Route('/api/v1/job-offer', name: 'create_job_offer_v1', methods: ['POST'])]
     public function createJobOffer(ManagerRegistry $doctrine, Request $request): Response
     {
-        $companyId = $request->get("company_id");
+        $getCompanyId = function () use ($doctrine, $request): ?int {
+            $cpId = $request->get("company_id");
+
+            if (!is_null($cpId))
+                return $cpId;
+
+            $user = $this->getUser();
+            if ($user->getType() != LoginType::COMPANY) {
+                return null;
+            }
+
+            return $doctrine->getRepository(Company::class)
+                ?->findOneBy(['login' => $user->getId()])
+                ?->getId();
+        };
+
+        $companyId = $getCompanyId();
+
         $jobDescription = $request->get("description");
         $is_active = $request->get("is_active") === "true";
         $title = $request->get("title");
@@ -369,7 +388,9 @@ class JobOfferController extends AbstractController
     #[Route('/api/v1/job-offer', name: 'job-offer-delete_v1', methods: ['DELETE'])]
     public function deleteJobOffer(ManagerRegistry $doctrine, Request $request): Response
     {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        $isCompany = in_array("ROLE_COMPANY", $this->getUser()->getRoles());
+        if (!$isCompany)
+            $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
         $id = $request->get("id");
 
@@ -380,6 +401,15 @@ class JobOfferController extends AbstractController
 
         $repository = $entityManager->getRepository(JobOffer::class);
         $jobOffer = $repository->find($id);
+
+        if (is_null($jobOffer))
+            throw new BadRequestHttpException();
+
+        if ($isCompany) {
+            $loginOwnJob = $jobOffer->getCompany()->getLogin()->getId() === $this->getUser()->getId();
+            if (!$loginOwnJob)
+                throw new BadRequestHttpException();
+        }
 
         $repository->remove($jobOffer, true);
 
