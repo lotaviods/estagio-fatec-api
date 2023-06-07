@@ -87,7 +87,7 @@ class StudentService
     {
         /** @var StudentJobApplicationStatusRepository $appStatusRepository */
         $appStatusRepository = $this->manager->getRepository(StudentJobApplicationStatus::class);
-        $studentApplicationInfo = $appStatusRepository->findOneBy(['student' => $student->getId()]);
+        $studentApplicationInfo = $appStatusRepository->findOneBy(['student' => $student->getId(), 'jobOffer' => $job->getId()]);
 
         if (is_null($studentApplicationInfo)) {
             $newAppStatus = new StudentJobApplicationStatus();
@@ -125,7 +125,7 @@ class StudentService
             $jobOffer = $status?->getJobOffer();
             $company = $jobOffer?->getCompany();
             $address = $company?->getAddress();
-            if ($student->getAppliedJobOffers()->contains($jobOffer))
+            if ($student->getAppliedJobOffers()->contains($jobOffer) && !$status->getStatus() == 0)
                 $array[] = [
                     "notification_type" => 1,
                     "company_name" => $company?->getName(),
