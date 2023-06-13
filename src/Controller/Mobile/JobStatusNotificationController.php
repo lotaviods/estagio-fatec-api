@@ -14,7 +14,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-class NotificationController extends AbstractController
+class JobStatusNotificationController extends AbstractController
 {
     #[Route('/api/v1/mobile/user/notification', name: 'mobile_user_notification_v1', methods: ['GET'])]
     #[IsGranted('ROLE_STUDENT', message: 'You are not allowed to access the mobile notification route.')]
