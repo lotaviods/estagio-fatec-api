@@ -36,5 +36,5 @@ LINK_FATEC_MINIO_ENDPOINT="http://estagio-fatec-minio:9000"
 LINK_FATEC_MINIO_ACCESS_KEY=""
 LINK_FATEC_MINIO_SECRET_KEY=""
 LINK_FATEC_XDEBUG_PORT=9003
-
+LINK_FATEC_RABBIT_DSN=amqp://user:password@estagio-fatec-rabbitmq:5672
 DATABASE_URL="mysql://root:secret@fatec-db:3306/fatec-link-api?serverVersion=5.7"

@@ -34,5 +34,8 @@ services:
       $accessKey: '%env(LINK_FATEC_MINIO_ACCESS_KEY)%'
       $secretKey: '%env(LINK_FATEC_MINIO_SECRET_KEY)%'
 
+  App\Service\RabbitMQService:
+    arguments:
+      $dsn: '%env(LINK_FATEC_RABBIT_DSN)%'
   # add more service definitions when explicit configuration is needed
   # please note that last definitions always *replace* previous ones
