@@ -240,7 +240,7 @@ class JobOfferController extends AbstractController
         return new JsonResponse($jobsArray, Response::HTTP_OK, [], false);;
     }
 
-    #[Route('/api/v1/job-offers/student/{student_id}', name: 'applied-jobs_v1', methods: ['GET'])]
+    #[Route('/api/v1/job-offers/student/{student_id}/applied', name: 'applied-jobs_v1', methods: ['GET'])]
     public function getAppliedJobsFromStudent(ManagerRegistry $doctrine, Request $request): Response
     {
         $studentId = $request->get("student_id");
