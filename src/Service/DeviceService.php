@@ -19,16 +19,20 @@ class DeviceService
 
     function saveDevice(Login $login, string $uuid, string $desc, string $deviceToken): void
     {
-        $device = new Device();
 
-        $device->setLogin($login);
+        /** @var DeviceRepository $repository */
+        $repository = $this->doctrine->getRepository(Device::class);
+        $device = $repository->findOneBy(['uuid' => $uuid]);
+
+        if(is_null($device)) {
+            $device = new Device();
+            $device->setLogin($login);
+        }
+        
         $device->setToken($deviceToken);
         $device->setDescription($desc);
         $device->setUuid($uuid);
         $device->setNotify(true);
-
-        /** @var DeviceRepository $repository */
-        $repository = $this->doctrine->getRepository(Device::class);
 
         $repository->save($device, true);
     }
