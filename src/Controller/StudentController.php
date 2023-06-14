@@ -11,6 +11,7 @@ use App\Helper\MinioS3Helper;
 use App\Repository\JobOfferRepository;
 use App\Repository\StudentJobApplicationStatusRepository;
 use App\Repository\StudentRepository;
+use App\Service\RabbitMQService;
 use App\Service\StudentService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -129,7 +130,7 @@ class StudentController extends AbstractController
     }
 
     #[Route('/api/v1/student/{student_id}/job/{job_id}/application-status', name: 'student-update-application-status_v1', methods: ['PUT'])]
-    public function updateStudentJobApplicationStatus(ManagerRegistry $doctrine, Request $request): Response
+    public function updateStudentJobApplicationStatus(ManagerRegistry $doctrine, Request $request, RabbitMQService $mQService): Response
     {
         $newStatus = (int)$request->get("status");
         $job_id = $request->get("job_id");
@@ -168,6 +169,26 @@ class StudentController extends AbstractController
 
         $entityManager->persist($applicationStatus);
         $entityManager->flush();
+
+        $msg = $this->translator->trans('status_student_application_updated');
+
+        $complement = $newStatus === \JobOfferApplicationStatus::Applied ? $this->translator->trans('approved') : $this->translator->trans('rejected');
+
+        $msgFormatted = sprintf($msg, $complement, $applicationStatus->getJobOffer()->getTitle());
+
+        $messageTemplate = [
+            'to' => '%s',
+            'message' => $msgFormatted,
+            'title' => 'Fatec Estágios',
+        ];
+
+        $devices = $applicationStatus->getStudent()->getLogin()->getDevices();
+
+        foreach ($devices as $device) {
+            $payload = json_encode($messageTemplate, JSON_UNESCAPED_UNICODE);
+            $formattedPayload = sprintf($payload, $device->getToken());
+            $mQService->publish($formattedPayload, "link-fatec-push");
+        }
 
         return new JsonResponse(array(), Response::HTTP_OK, [], false);
     }
