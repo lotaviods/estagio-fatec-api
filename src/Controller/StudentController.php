@@ -172,7 +172,7 @@ class StudentController extends AbstractController
 
         $msg = $this->translator->trans('status_student_application_updated');
 
-        $complement = $newStatus === \JobOfferApplicationStatus::Applied ? $this->translator->trans('approved') : $this->translator->trans('rejected');
+        $complement = $newStatus === \JobOfferApplicationStatus::Applied ? $this->translator->trans('accepted') : $this->translator->trans('rejected');
 
         $msgFormatted = sprintf($msg, $complement, $applicationStatus->getJobOffer()->getTitle());
 

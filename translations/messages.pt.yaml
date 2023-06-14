@@ -22,9 +22,9 @@ month_october: 'Outubro'
 month_november: 'Novembro'
 month_december: 'Dezembro'
 new_job_offer: 'Uma nova vaga foi adicionada'
-status_student_application_updated: 'Você foi %s para a vaga: %s'
-approved: 'aprovado'
-rejected: 'rejeitado'
+status_student_application_updated: 'Sua candidatura foi %s para a vaga: %s'
+accepted: 'aceita'
+rejected: 'rejeitada'
 course: curso
 job: vaga
 errors: erros
