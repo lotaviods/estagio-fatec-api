@@ -19,6 +19,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -231,6 +232,32 @@ class JobOfferController extends AbstractController
         /** @var JobOffer $job */
         foreach ($jobsResult as $job) {
             if ($job->isActive() && $job->getTargetCourse()->getId() == $couseId) {
+                $currentJob = $job->toArray();
+                /** @var JobOffer $job */
+                $currentJob["company_profile_picture"] = $job->getCompany()?->getLogin()?->getProfilePictureUrl($this->minioS3Helper);
+                if ($job->getPromotionalImageUrl()) {
+                    $currentJob["promotional_image_url"] = $this->minioS3Helper->getFullUrl($currentJob["promotional_image_url"]);
+                }
+                $jobsArray[] = $currentJob;
+            }
+        }
+
+        return new JsonResponse($jobsArray, Response::HTTP_OK, [], false);;
+    }
+
+    #[Route('/api/v1/job-offers/available/student', name: 'available-job-offers-student_v1', methods: ['GET'])]
+    #[IsGranted('ROLE_STUDENT', message: 'You are not allowed to access the student route.')]
+    public function getAvailableJobOffersByStudent(ManagerRegistry $doctrine, Request $request): Response
+    {
+        $login = $this->getUser();
+        $student = $doctrine->getRepository(Student::class)->findOneBy(["login" => $login->getId()]);
+        $entityManager = $doctrine->getManager();
+        $jobOfferRepo = $entityManager->getRepository(JobOffer::class);
+        $jobsResult = $jobOfferRepo->findBy(['targetCourse' => $student->getCourse()->getId()]);
+        $jobsArray = [];
+        /** @var JobOffer $job */
+        foreach ($jobsResult as $job) {
+            if ($job->isActive() && !$student->getAppliedJobOffers()->contains($job)) {
                 $currentJob = $job->toArray();
                 /** @var JobOffer $job */
                 $currentJob["company_profile_picture"] = $job->getCompany()?->getLogin()?->getProfilePictureUrl($this->minioS3Helper);
