@@ -13,6 +13,7 @@ use App\Repository\CompanyRepository;
 use App\Repository\JobOfferRepository;
 use App\Repository\StudentRepository;
 use App\Service\JobOfferService;
+use App\Service\RabbitMQService;
 use App\Service\StudentService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -91,7 +92,9 @@ class JobOfferController extends AbstractController
     }
 
     #[Route('/api/v1/job-offer', name: 'create_job_offer_v1', methods: ['POST'])]
-    public function createJobOffer(ManagerRegistry $doctrine, Request $request): Response
+    public function createJobOffer(ManagerRegistry $doctrine,
+                                   Request         $request,
+                                   JobOfferService $jobOfferService): Response
     {
         $getCompanyId = function () use ($doctrine, $request): ?int {
             $cpId = $request->get("company_id");
@@ -163,6 +166,7 @@ class JobOfferController extends AbstractController
         }
 
         $repository->save($job, true);
+        $jobOfferService->sendNewJobPushNotification($targetCourse->getStudents());
 
         return new JsonResponse($job->toArray(), Response::HTTP_OK, [], false);;
     }

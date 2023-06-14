@@ -36,7 +36,7 @@ class Login implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $profilePicture = null;
 
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Device::class)]
+    #[ORM\OneToMany(mappedBy: 'login', targetEntity: Device::class)]
     private Collection $devices;
 
     public function __construct()
