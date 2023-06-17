@@ -26,7 +26,7 @@ class Device
     private ?bool $notify = null;
 
     #[ORM\ManyToOne(inversedBy: 'devices')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private ?Login $login = null;
 
     public function getId(): ?int
