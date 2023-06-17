@@ -15,7 +15,7 @@ class Course
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(type: 'text', nullable: true)]
     private ?string $name = null;
     #[ORM\OneToMany(mappedBy: 'targetCourse', targetEntity: JobOffer::class, cascade: ['persist', 'remove'])]
     private Collection $jobOffer;
@@ -23,7 +23,7 @@ class Course
     #[ORM\OneToMany(mappedBy: 'course', targetEntity: Student::class)]
     private Collection $students;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(type: 'text', nullable: true)]
     private ?string $description = null;
 
     public function __construct()
