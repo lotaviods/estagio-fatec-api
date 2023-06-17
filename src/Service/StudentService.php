@@ -137,6 +137,16 @@ class StudentService
                 ];
         }
 
+        // Sort the $jobsArray by created_at in descending order (newer first)
+        usort($array, function ($a, $b) {
+            /** @var DateTimeInterface $dateA */
+            $dateA = $a['status_changed_date'];
+            /** @var DateTimeInterface $dateB */
+            $dateB = $b['status_changed_date'];
+
+            return $dateB <=> $dateA;
+        });
+
         return $array;
     }
 

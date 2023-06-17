@@ -267,6 +267,15 @@ class JobOfferController extends AbstractController
                 $jobsArray[] = $currentJob;
             }
         }
+        // Sort the $jobsArray by created_at in descending order (newer first)
+        usort($jobsArray, function ($a, $b) {
+            /** @var DateTimeInterface $dateA */
+            $dateA = $a['created_at'];
+            /** @var DateTimeInterface $dateB */
+            $dateB = $b['created_at'];
+
+            return $dateB <=> $dateA;
+        });
 
         return new JsonResponse($jobsArray, Response::HTTP_OK, [], false);;
     }
@@ -296,6 +305,16 @@ class JobOfferController extends AbstractController
                 $jobsArray[] = $currentJob;
             }
         }
+
+        // Sort the $jobsArray by created_at in descending order (newer first)
+        usort($jobsArray, function ($a, $b) {
+            /** @var DateTimeInterface $dateA */
+            $dateA = $a['created_at'];
+            /** @var DateTimeInterface $dateB */
+            $dateB = $b['created_at'];
+
+            return $dateB <=> $dateA;
+        });
 
         return new JsonResponse($jobsArray, Response::HTTP_OK, [], false);;
     }
